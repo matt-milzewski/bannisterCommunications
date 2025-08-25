@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Path Test - Bannister Communications</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .test-container { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        .success { color: green; font-weight: bold; }
+        .error { color: red; font-weight: bold; }
+        img { max-width: 100px; height: auto; margin: 10px; border: 2px solid #ddd; }
+        .img-test { display: flex; flex-wrap: wrap; align-items: center; margin: 10px 0; }
+        .path-info { background: #f0f0f0; padding: 10px; border-left: 4px solid #333; margin: 10px 0; }
+        .current-url { background: #e3f2fd; padding: 10px; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <h1>Bannister Communications - File Path Diagnostic Test</h1>
+    
+    <div class="current-url">
+        <strong>Current Page URL:</strong> <span id="current-url"></span>
+    </div>
+
+    <div class="test-container">
+        <h2>CSS Test</h2>
+        <p id="css-test" class="error">CSS not loaded - website will look broken</p>
+        <div class="path-info">Expected path: assets/css/style.css</div>
+    </div>
+
+    <div class="test-container">
+        <h2>JavaScript Test</h2>
+        <p id="js-test" class="error">JavaScript not loaded - interactive features won't work</p>
+        <div class="path-info">Expected path: assets/js/main.js</div>
+    </div>
+
+    <div class="test-container">
+        <h2>Image Tests</h2>
+        
+        <h3>Logo Test</h3>
+        <div class="img-test">
+            <img src="assets/images/CMYK.jpg" alt="Logo test" onerror="this.style.border='2px solid red'; this.alt='❌ Logo not found';" onload="this.style.border='2px solid green';">
+            <div class="path-info">Path: assets/images/CMYK.jpg</div>
+        </div>
+
+        <h3>Hero Image Test</h3>
+        <div class="img-test">
+            <img src="assets/images/486736845_1078596074311950_3755107768024564576_n.jpg" alt="Hero test" onerror="this.style.border='2px solid red'; this.alt='❌ Hero image not found';" onload="this.style.border='2px solid green';">
+            <div class="path-info">Path: assets/images/486736845_1078596074311950_3755107768024564576_n.jpg</div>
+        </div>
+
+        <h3>HiLook Kit Test</h3>
+        <div class="img-test">
+            <img src="assets/images/HLIK-4286TH2-AI-KITPIC-SQ-500x500.webp" alt="HiLook test" onerror="this.style.border='2px solid red'; this.alt='❌ HiLook image not found';" onload="this.style.border='2px solid green';">
+            <div class="path-info">Path: assets/images/HLIK-4286TH2-AI-KITPIC-SQ-500x500.webp</div>
+        </div>
+    </div>
+
+    <div class="test-container">
+        <h2>Alternative Path Tests</h2>
+        <p>Testing if files work with different path formats:</p>
+        
+        <h3>Absolute Path Test</h3>
+        <div class="img-test">
+            <img src="/assets/images/CMYK.jpg" alt="Absolute path test" onerror="this.style.border='2px solid red'; this.alt='❌ Absolute path failed';" onload="this.style.border='2px solid green';">
+            <div class="path-info">Path: /assets/images/CMYK.jpg</div>
+        </div>
+
+        <h3>Direct Path Test</h3>
+        <div class="img-test">
+            <img src="CMYK.jpg" alt="Direct path test" onerror="this.style.border='2px solid red'; this.alt='❌ Direct path failed';" onload="this.style.border='2px solid green';">
+            <div class="path-info">Path: CMYK.jpg (if logo is in same folder as HTML)</div>
+        </div>
+    </div>
+
+    <div class="test-container">
+        <h2>Server Information</h2>
+        <div id="server-info">
+            <p><strong>User Agent:</strong> <span id="user-agent"></span></p>
+            <p><strong>Page Location:</strong> <span id="page-location"></span></p>
+            <p><strong>Protocol:</strong> <span id="protocol"></span></p>
+            <p><strong>Host:</strong> <span id="host"></span></p>
+        </div>
+    </div>
+
+    <div class="test-container">
+        <h2>Recommendations</h2>
+        <div id="recommendations">
+            <h3>If images have GREEN borders:</h3>
+            <ul>
+                <li>✅ Files are accessible with these paths</li>
+                <li>✅ Your server structure is correct</li>
+                <li>Problem might be browser cache - try hard refresh (Ctrl+F5)</li>
+            </ul>
+            
+            <h3>If images have RED borders:</h3>
+            <ul>
+                <li>❌ Check file upload - ensure all files in assets/ folder uploaded</li>
+                <li>❌ Check file permissions (files: 644, folders: 755)</li>
+                <li>❌ Check case sensitivity (some servers are case-sensitive)</li>
+                <li>❌ Check if server requires different path format</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Update current URL
+        document.getElementById('current-url').textContent = window.location.href;
+        document.getElementById('user-agent').textContent = navigator.userAgent;
+        document.getElementById('page-location').textContent = window.location.pathname;
+        document.getElementById('protocol').textContent = window.location.protocol;
+        document.getElementById('host').textContent = window.location.host;
+
+        // Test CSS
+        const testElement = document.createElement('div');
+        testElement.style.display = 'none';
+        testElement.className = 'test-css-class';
+        document.body.appendChild(testElement);
+        
+        setTimeout(() => {
+            const styles = getComputedStyle(testElement);
+            if (styles.display !== 'none') {
+                document.getElementById('css-test').textContent = '✅ CSS loaded successfully';
+                document.getElementById('css-test').className = 'success';
+            }
+        }, 100);
+
+        // Test JavaScript
+        document.getElementById('js-test').textContent = '✅ JavaScript is working';
+        document.getElementById('js-test').className = 'success';
+    </script>
+</body>
+</html>
