@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://bannistercommunications.com/sitemap.xml
+
+# Disallow admin areas (if any are added later)
+# Disallow: /admin/
+# Disallow: /private/
+
+# Allow all search engines to crawl the site
+# Bannister Communications - CCTV and Security Systems in Maryborough QLD
+# Local business serving Maryborough and surrounding areas
