@@ -335,6 +335,10 @@ a:focus, button:focus, input:focus, textarea:focus, select:focus {
 
 .gear-item {
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: space-between;
 }
 
 .gear-item img {
@@ -353,6 +357,7 @@ a:focus, button:focus, input:focus, textarea:focus, select:focus {
 .gear-item p {
     margin-bottom: 1rem;
     color: #666;
+    flex-grow: 1;
 }
 
 .learn-more {
