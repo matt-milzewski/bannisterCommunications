@@ -100,7 +100,6 @@ a:focus, button:focus, input:focus, textarea:focus, select:focus {
 .logo img {
     height: 80px;
     width: auto;
-    max-width: 240px;
 }
 
 /* Mobile Navigation */
@@ -1192,7 +1191,7 @@ a:focus, button:focus, input:focus, textarea:focus, select:focus {
     
     .logo img {
         height: 100px;
-        max-width: 300px;
+        width: auto;
     }
     
     .nav {
