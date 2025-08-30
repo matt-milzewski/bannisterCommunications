@@ -88,8 +88,8 @@ a:focus, button:focus, input:focus, textarea:focus, select:focus {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem;
-    min-height: 140px;
+    padding: 0.5rem 1rem;
+    min-height: 130px;
 }
 
 .logo {
@@ -1185,8 +1185,8 @@ a:focus, button:focus, input:focus, textarea:focus, select:focus {
     
     /* Header */
     .header-content {
-        padding: 1.5rem 2rem;
-        min-height: 160px;
+        padding: 0.75rem 2rem;
+        min-height: 150px;
     }
     
     .logo img {
