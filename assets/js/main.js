@@ -191,20 +191,29 @@ function initContactForm() {
             }
         })
         .then(response => {
+            console.log('Response status:', response.status);
             if (response.ok) {
-                // Success
-                successMessage.style.display = 'block';
-                contactForm.reset();
-                successMessage.scrollIntoView({ behavior: 'smooth' });
-                
-                // Track form submission (if analytics available)
-                if (typeof gtag !== 'undefined') {
-                    gtag('event', 'form_submit', {
-                        'form_name': 'contact_form'
-                    });
-                }
+                return response.json().then(data => {
+                    console.log('Success response:', data);
+                    // Success
+                    successMessage.style.display = 'block';
+                    contactForm.reset();
+                    successMessage.scrollIntoView({ behavior: 'smooth' });
+                    
+                    // Track form submission (if analytics available)
+                    if (typeof gtag !== 'undefined') {
+                        gtag('event', 'form_submit', {
+                            'form_name': 'contact_form'
+                        });
+                    }
+                });
             } else {
-                throw new Error('Network response was not ok');
+                return response.json().then(data => {
+                    console.error('Error response:', data);
+                    throw new Error(data.error || `HTTP ${response.status}: ${response.statusText}`);
+                }).catch(() => {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                });
             }
         })
         .catch(error => {
@@ -212,6 +221,12 @@ function initContactForm() {
             errorMessage.style.display = 'block';
             errorMessage.scrollIntoView({ behavior: 'smooth' });
             console.error('Form submission error:', error);
+            
+            // Update error message with more specific details
+            const errorText = errorMessage.querySelector('p');
+            if (errorText && error.message) {
+                errorText.textContent = `Error: ${error.message}. Please try again or contact us directly.`;
+            }
         })
         .finally(() => {
             // Reset button
