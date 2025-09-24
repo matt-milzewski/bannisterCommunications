@@ -2,7 +2,7 @@ User-agent: *
 Allow: /
 
 # Sitemap
-Sitemap: https://bannistercommunications.com/sitemap.xml
+Sitemap: https://www.bannistercommunications.com/sitemap.xml
 
 # Disallow admin areas (if any are added later)
 # Disallow: /admin/
