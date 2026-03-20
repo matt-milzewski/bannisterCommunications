@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initSmoothScroll();
     initContactForm();
     initMobileCTABar();
+    initWhatsAppWidget();
     initImageLazyLoading();
     initAccessibility();
 });
@@ -342,6 +343,47 @@ function initMobileCTABar() {
 }
 
 /**
+ * WhatsApp Widget
+ */
+function initWhatsAppWidget() {
+    if (document.querySelector('.whatsapp-widget')) return;
+
+    const phoneLink = document.querySelector('a[href^="tel:"]');
+    const schemaPhone = getSchemaPhoneNumber();
+    const rawPhone = phoneLink ? phoneLink.getAttribute('href').replace(/^tel:/i, '') : schemaPhone;
+    const whatsappPhone = normalizePhoneNumber(rawPhone);
+
+    if (!whatsappPhone) return;
+
+    const displayPhone = formatAustralianDisplayNumber(whatsappPhone);
+    const whatsappMessage = encodeURIComponent('Hi Bannister Communications, I found your website and would like to chat about a quote.');
+
+    const widget = document.createElement('a');
+    widget.className = 'whatsapp-widget';
+    widget.href = `https://wa.me/${whatsappPhone}?text=${whatsappMessage}`;
+    widget.target = '_blank';
+    widget.rel = 'noopener noreferrer';
+    widget.setAttribute('aria-label', `Chat on WhatsApp with Bannister Communications at ${displayPhone}`);
+
+    const icon = document.createElement('span');
+    icon.className = 'whatsapp-widget__icon';
+    icon.setAttribute('aria-hidden', 'true');
+    icon.innerHTML = `
+        <svg viewBox="0 0 32 32" focusable="false">
+            <path fill="currentColor" d="M16.01 3.2c-7.08 0-12.81 5.73-12.81 12.81 0 2.26.59 4.47 1.71 6.42L3 29l6.75-1.77a12.79 12.79 0 0 0 6.26 1.61h.01c7.07 0 12.8-5.73 12.8-12.81S23.08 3.2 16.01 3.2Zm0 23.47h-.01a10.67 10.67 0 0 1-5.43-1.48l-.39-.23-4 .99 1.07-3.9-.25-.4a10.69 10.69 0 1 1 19.7-5.63 10.69 10.69 0 0 1-10.69 10.65Zm5.86-8.02c-.32-.16-1.88-.93-2.17-1.03-.29-.11-.5-.16-.71.16-.21.32-.82 1.03-1 1.24-.18.21-.36.24-.68.08-.32-.16-1.34-.49-2.56-1.56-.95-.84-1.59-1.87-1.77-2.18-.19-.32-.02-.48.14-.64.14-.14.32-.37.48-.55.16-.19.21-.32.32-.53.11-.21.05-.4-.03-.56-.08-.16-.71-1.72-.97-2.35-.26-.62-.52-.54-.71-.55h-.61c-.21 0-.56.08-.85.4-.29.32-1.12 1.09-1.12 2.66s1.15 3.08 1.31 3.29c.16.21 2.26 3.44 5.47 4.82.76.33 1.36.52 1.83.66.77.24 1.46.21 2.01.13.61-.09 1.88-.77 2.15-1.51.27-.74.27-1.38.19-1.51-.08-.13-.29-.21-.61-.37Z"/>
+        </svg>
+    `;
+
+    const text = document.createElement('span');
+    text.className = 'whatsapp-widget__text';
+    text.textContent = 'Chat on WhatsApp';
+
+    widget.appendChild(icon);
+    widget.appendChild(text);
+    document.body.appendChild(widget);
+}
+
+/**
  * Enhanced Image Lazy Loading
  */
 function initImageLazyLoading() {
@@ -468,6 +510,53 @@ function addSkipToMainLink() {
     document.body.insertBefore(skipLink, document.body.firstChild);
 }
 
+function getSchemaPhoneNumber() {
+    const schemaNode = document.querySelector('script[type="application/ld+json"]');
+    if (!schemaNode) return '';
+
+    try {
+        const data = JSON.parse(schemaNode.textContent);
+        if (typeof data.telephone === 'string') {
+            return data.telephone;
+        }
+    } catch (error) {
+        console.warn('Unable to parse schema phone number:', error);
+    }
+
+    return '';
+}
+
+function normalizePhoneNumber(phoneNumber) {
+    if (!phoneNumber) return '';
+
+    const digitsOnly = phoneNumber.replace(/\D/g, '');
+    if (!digitsOnly) return '';
+
+    if (digitsOnly.startsWith('61')) {
+        return digitsOnly;
+    }
+
+    if (digitsOnly.startsWith('0')) {
+        return `61${digitsOnly.slice(1)}`;
+    }
+
+    return digitsOnly;
+}
+
+function formatAustralianDisplayNumber(phoneNumber) {
+    const digitsOnly = normalizePhoneNumber(phoneNumber);
+    if (!digitsOnly.startsWith('61')) {
+        return phoneNumber;
+    }
+
+    const localNumber = `0${digitsOnly.slice(2)}`;
+    if (localNumber.length === 10) {
+        return `${localNumber.slice(0, 4)} ${localNumber.slice(4, 7)} ${localNumber.slice(7)}`;
+    }
+
+    return localNumber;
+}
+
 /**
  * Utility Functions
  */
@@ -548,6 +637,7 @@ if (typeof module !== 'undefined' && module.exports) {
         initMobileNav,
         initSmoothScroll,
         initContactForm,
+        initWhatsAppWidget,
         validateField,
         debounce,
         throttle
