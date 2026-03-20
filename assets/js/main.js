@@ -358,6 +358,8 @@ function initWhatsAppWidget() {
     const displayPhone = formatAustralianDisplayNumber(whatsappPhone);
     const whatsappMessage = encodeURIComponent('Hi Bannister Communications, I found your website and would like to chat about a quote.');
 
+    syncMobileWhatsAppCTA(whatsappPhone, whatsappMessage, displayPhone);
+
     const widget = document.createElement('a');
     widget.className = 'whatsapp-widget';
     widget.href = `https://wa.me/${whatsappPhone}?text=${whatsappMessage}`;
@@ -508,6 +510,19 @@ function addSkipToMainLink() {
     });
     
     document.body.insertBefore(skipLink, document.body.firstChild);
+}
+
+function syncMobileWhatsAppCTA(whatsappPhone, whatsappMessage, displayPhone) {
+    const mobileSecondaryCTA = document.querySelector('.mobile-cta-bar .mobile-cta-quote');
+
+    if (!mobileSecondaryCTA) return;
+
+    mobileSecondaryCTA.href = `https://wa.me/${whatsappPhone}?text=${whatsappMessage}`;
+    mobileSecondaryCTA.textContent = 'WhatsApp';
+    mobileSecondaryCTA.target = '_blank';
+    mobileSecondaryCTA.rel = 'noopener noreferrer';
+    mobileSecondaryCTA.classList.add('mobile-cta-whatsapp');
+    mobileSecondaryCTA.setAttribute('aria-label', `Chat on WhatsApp with Bannister Communications at ${displayPhone}`);
 }
 
 function getSchemaPhoneNumber() {
