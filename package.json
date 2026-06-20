@@ -1,0 +1,18 @@
+{
+  "name": "bannister-communications-website",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Bannister Communications static website",
+  "scripts": {
+    "prebuild": "node scripts/fetch-cms-posts.js",
+    "build": "node scripts/build-site.js",
+    "serve": "npx http-server _site -p 4174",
+    "test": "npm run build && node scripts/verify-build.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}

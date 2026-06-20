@@ -3,6 +3,7 @@ name: Deploy to S3
 on:
   push:
     branches: [main]
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -11,6 +12,20 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build site
+        env:
+          ANCHOR_CMS_API_BASE: ${{ vars.ANCHOR_CMS_API_BASE }}
+          ANCHOR_CMS_SITE_ID: bannister-communications
+        run: npm run build
         
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -21,7 +36,7 @@ jobs:
           
       - name: Sync files to S3
         run: |
-          aws s3 sync . s3://bannistercommunications --delete --exclude ".git/*" --exclude ".github/*" --exclude "node_modules/*" --exclude ".DS_Store"
+          aws s3 sync _site/ s3://bannistercommunications --delete --exclude ".DS_Store"
           
       - name: Invalidate CloudFront
         run: |
