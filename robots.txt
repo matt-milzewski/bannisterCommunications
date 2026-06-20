@@ -9,5 +9,4 @@ Sitemap: https://www.bannistercommunications.com/sitemap.xml
 # Disallow: /private/
 
 # Allow all search engines to crawl the site
-# Bannister Communications - CCTV and Security Systems in Maryborough QLD
-# Local business serving Maryborough and surrounding areas
+# Bannister Communications - CCTV and security systems in Maryborough, Hervey Bay and Gympie QLD

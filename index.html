@@ -3,23 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Security Camera Installation Maryborough | Bannister Communications</title>
-    <meta name="description" content="Security camera installation Maryborough specialists. Bannister Communications installs PSA Centrii &amp; HiLook CCTV, alarms, and maintenance for homes and businesses across the Fraser Coast.">
+    <title>CCTV Installation Maryborough, Hervey Bay &amp; Gympie | Bannister</title>
+    <meta name="description" content="Licensed CCTV and alarm installation in Maryborough, Hervey Bay and Gympie. Local PSA Centrii and HiLook specialists for homes, businesses and rural properties.">
     <link rel="canonical" href="https://www.bannistercommunications.com/">
-    <link rel="icon" type="image/jpeg" href="/assets/images/Bannister_Logo.jpg">
+    <link rel="icon" type="image/png" href="/assets/images/new_logo.PNG">
     
     <!-- Open Graph -->
-    <meta property="og:title" content="Security Camera Installation Maryborough | Bannister Communications">
-    <meta property="og:description" content="Security camera installation Maryborough experts for PSA Centrii &amp; HiLook CCTV, alarms, and maintenance across the Fraser Coast.">
-    <meta property="og:image" content="https://www.bannistercommunications.com/assets/images/Bannister_Logo.jpg">
+    <meta property="og:title" content="CCTV Installation Maryborough, Hervey Bay &amp; Gympie | Bannister">
+    <meta property="og:description" content="Licensed CCTV, alarm and security system installation across Maryborough, Hervey Bay and Gympie.">
+    <meta property="og:image" content="https://www.bannistercommunications.com/assets/images/new_logo.PNG">
     <meta property="og:url" content="https://www.bannistercommunications.com/">
     <meta property="og:type" content="website">
     
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Security Camera Installation Maryborough | Bannister Communications">
-    <meta name="twitter:description" content="Security camera installation Maryborough experts for PSA Centrii &amp; HiLook CCTV, alarms, and maintenance across the Fraser Coast.">
-    <meta name="twitter:image" content="https://www.bannistercommunications.com/assets/images/Bannister_Logo.jpg">
+    <meta name="twitter:title" content="CCTV Installation Maryborough, Hervey Bay &amp; Gympie | Bannister">
+    <meta name="twitter:description" content="Licensed CCTV, alarm and security system installation across Maryborough, Hervey Bay and Gympie.">
+    <meta name="twitter:image" content="https://www.bannistercommunications.com/assets/images/new_logo.PNG">
     
     <!-- Inline Critical CSS -->
     <style>
@@ -52,7 +52,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 0.5rem 1rem;
-            min-height: 130px;
+            min-height: 96px;
         }
         
         .logo {
@@ -61,7 +61,7 @@
         }
         
         .logo img {
-            height: 120px;
+            height: 84px;
             width: auto;
         }
         
@@ -114,8 +114,14 @@
             max-width: 1200px;
             margin: 0 auto;
             display: grid;
+            grid-template-columns: minmax(0, 1fr);
             gap: 2rem;
             align-items: center;
+        }
+
+        .hero-text,
+        .hero-image {
+            min-width: 0;
         }
         
         .hero h1 {
@@ -178,11 +184,11 @@
         @media (min-width: 768px) {
             .header-content {
                 padding: 0.75rem 2rem;
-                min-height: 150px;
+                min-height: 112px;
             }
             
             .logo img {
-                height: 140px;
+                height: 100px;
                 width: auto;
             }
             
@@ -207,7 +213,7 @@
             }
             
             .hero-content {
-                grid-template-columns: 1fr 1fr;
+                grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
                 padding: 3rem 0;
             }
             
@@ -224,7 +230,7 @@
         "@type": "ProfessionalService",
         "@id": "https://www.bannistercommunications.com/#business",
         "name": "Bannister Communications",
-        "image": "https://www.bannistercommunications.com/assets/images/Bannister_Logo.jpg",
+        "image": "https://www.bannistercommunications.com/assets/images/new_logo.PNG",
         "url": "https://www.bannistercommunications.com/",
         "telephone": "+61416945872",
         "email": "support@bannistercommunications.com",
@@ -236,7 +242,12 @@
             "postalCode": "4650",
             "addressCountry": "AU"
         },
-        "areaServed": "Maryborough QLD, Curra, Gympie and local suburbs",
+        "areaServed": [
+            {"@type": "City", "name": "Maryborough, Queensland"},
+            {"@type": "City", "name": "Hervey Bay, Queensland"},
+            {"@type": "City", "name": "Gympie, Queensland"},
+            {"@type": "AdministrativeArea", "name": "Fraser Coast, Queensland"}
+        ],
         "founder": "Craig Bannister",
         "knowsAbout": [
             "CCTV installation Maryborough",
@@ -248,7 +259,13 @@
             "CCTV maintenance Maryborough",
             "wireless security cameras Maryborough",
             "NVR installation Maryborough",
-            "intercom installation Maryborough"
+            "intercom installation Maryborough",
+            "CCTV installation Hervey Bay",
+            "security camera installation Hervey Bay",
+            "alarm installation Hervey Bay",
+            "CCTV installation Gympie",
+            "security camera installation Gympie",
+            "alarm installation Gympie"
         ],
         "sameAs": [
             "https://www.facebook.com/bcommunicarions"
@@ -259,9 +276,9 @@
 <body>
     <header class="header">
         <div class="header-content">
-            <div class="logo">
-                <img src="assets/images/Bannister_Logo.jpg" alt="Bannister Communications logo">
-            </div>
+            <a class="logo" href="/" aria-label="Bannister Communications home">
+                <img src="assets/images/new_logo.PNG" alt="Bannister Communications CCTV and Security">
+            </a>
             <nav class="nav" id="nav">
                 <ul>
                     <li><a href="/">Home</a></li>
@@ -278,13 +295,13 @@
         <section class="hero">
             <div class="hero-content">
                 <div class="hero-text">
-                    <h1>Security Camera Installation Maryborough Experts</h1>
-                    <p class="hero-subcopy">Licensed installers delivering security camera installation in Maryborough for homes, shops, and industrial sites. PSA Centrii & HiLook CCTV, alarms, and smart monitoring.</p>
+                    <h1>CCTV &amp; Security Camera Installation Across Maryborough, Hervey Bay &amp; Gympie</h1>
+                    <p class="hero-subcopy">Licensed local installers for homes, shops, industrial sites and rural properties. PSA Centrii and HiLook CCTV, alarms, smart monitoring and network cabling.</p>
                     <div class="cta-buttons">
                         <a href="/contact.html" class="btn btn-primary">Request a Quote</a>
                         <a href="tel:+61416945872" class="btn btn-secondary">Call 0416 945 872</a>
                     </div>
-                    <p class="hero-subcopy">Need a security camera install in Maryborough or nearby suburbs? We design CCTV packages, alarm upgrades, and network cabling so your system stays reliable from day one.</p>
+                    <p class="hero-subcopy">Need a security camera installer in Maryborough, Hervey Bay or Gympie? We design CCTV packages, alarm upgrades and cabling so your system stays reliable from day one.</p>
                 </div>
                 <div class="hero-image">
                     <img src="assets/images/Home_Safety_connected.jpg" alt="PSA Centrii home security system installed in Maryborough home" width="600" height="400" loading="eager">
@@ -300,8 +317,8 @@
                         <span>Security Licence #4429602</span>
                     </div>
                     <div class="trust-item">
-                        <strong>Maryborough Local</strong>
-                        <span>Born and bred local service</span>
+                        <strong>Regional Local Service</strong>
+                        <span>Maryborough, Hervey Bay &amp; Gympie</span>
                     </div>
                     <div class="trust-item">
                         <strong>25+ Years Experience</strong>
@@ -317,7 +334,7 @@
 
         <section class="what-we-install">
             <div class="container">
-                <h2>Security Camera & Alarm Installation Services in Maryborough</h2>
+                <h2>Security Camera &amp; Alarm Installation Services</h2>
                 <div class="services-grid">
                     <div class="service-card">
                         <img src="assets/images/HLIK-4286TH2-AI-KITPIC-SQ-500x500.webp" alt="HiLook 4-camera CCTV kit for Maryborough homes" width="300" height="200" loading="lazy">
@@ -345,8 +362,65 @@
             <div class="container">
                 <h2>Why Choose a Local, Licensed Installer?</h2>
                 <div class="why-content">
-                    <p>Local Maryborough support means faster response times, personalised service, and someone you can trust. We provide tidy installations, honest advice, and ongoing maintenance when you need it most.</p>
+                    <p>Local support across Maryborough, Hervey Bay and Gympie means practical advice, personalised service and someone you can call after installation. We provide tidy installations, clear handover and ongoing maintenance when you need it.</p>
                     <p>As a fully licensed security provider (Licence #4429602), we ensure all installations meet Australian standards and regulations, giving you peace of mind and proper insurance coverage.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="locations-section" aria-labelledby="locations-heading">
+            <div class="container">
+                <div class="section-heading">
+                    <p class="eyebrow">Local coverage</p>
+                    <h2 id="locations-heading">Security Installation in Your Area</h2>
+                    <p>We install and maintain CCTV, alarms and access systems across the Fraser Coast and Gympie region.</p>
+                </div>
+                <div class="location-grid">
+                    <article class="location-card">
+                        <h3>Maryborough</h3>
+                        <p>Local CCTV and alarm installation for homes, businesses, sheds and rural properties throughout Maryborough and nearby suburbs.</p>
+                        <a href="/contact.html">Request a Maryborough quote</a>
+                    </article>
+                    <article class="location-card">
+                        <h3>Hervey Bay</h3>
+                        <p>Security cameras, alarms, remote viewing and network cabling for Hervey Bay homes, retail sites and commercial properties.</p>
+                        <a href="/hervey-bay.html">CCTV installation Hervey Bay</a>
+                    </article>
+                    <article class="location-card">
+                        <h3>Gympie</h3>
+                        <p>Reliable CCTV, alarms and solar camera options for Gympie homes, businesses and hard-to-cable rural locations.</p>
+                        <a href="/gympie.html">CCTV installation Gympie</a>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="reviews-section" aria-labelledby="reviews-heading">
+            <div class="container reviews-wrap">
+                <div class="section-heading">
+                    <p class="eyebrow">Customer feedback</p>
+                    <h2 id="reviews-heading">Our Google Reviews</h2>
+                    <p>Rated 5.0 from three Google reviews.</p>
+                </div>
+                <div class="reviews-grid">
+                    <article class="review-card">
+                        <div class="review-stars" aria-label="5 out of 5 stars">★★★★★</div>
+                        <blockquote>“Craigs knowledge and experience is exceptional. He arrived on time and did a great job improving WiFi. I highly recommend Bannister Communications.”</blockquote>
+                        <p class="review-author">David Puckering</p>
+                        <p class="review-source">Google review</p>
+                    </article>
+                    <article class="review-card">
+                        <div class="review-stars" aria-label="5 out of 5 stars">★★★★★</div>
+                        <blockquote>“If your looking at putting a security system on your house, I can highly recommend Craig from Bannister Communication, competitive price, easy to deal with and excellent on going support.”</blockquote>
+                        <p class="review-author">Deb Tidbury</p>
+                        <p class="review-source">Google review</p>
+                    </article>
+                    <article class="review-card">
+                        <div class="review-stars" aria-label="5 out of 5 stars">★★★★★</div>
+                        <blockquote>“Best technician, highly recommend”</blockquote>
+                        <p class="review-author">Brooke</p>
+                        <p class="review-source">Google review</p>
+                    </article>
                 </div>
             </div>
         </section>
@@ -385,7 +459,7 @@
 
         <section class="local-note">
             <div class="container">
-                <p><strong>Local Service Area:</strong> Servicing Maryborough and nearby local suburbs only. Contact us to confirm coverage in your area.</p>
+                <p><strong>Local Service Area:</strong> Servicing Maryborough, Hervey Bay, Gympie and surrounding communities. Contact us to confirm coverage for your property.</p>
             </div>
         </section>
     </main>
@@ -394,7 +468,7 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-logo">
-                    <img src="assets/images/Bannister_Logo.jpg" alt="Bannister Communications">
+                    <img src="assets/images/new_logo.PNG" alt="Bannister Communications CCTV and Security">
                     <p>Proudly installing PSA Centrii & HiLook systems</p>
                 </div>
                 <div class="footer-links">
@@ -403,19 +477,21 @@
                         <li><a href="/">Home</a></li>
                         <li><a href="/about.html">About</a></li>
                         <li><a href="/services.html">Services</a></li>
+                        <li><a href="/hervey-bay.html">Hervey Bay</a></li>
+                        <li><a href="/gympie.html">Gympie</a></li>
                         <li><a href="/contact.html">Contact</a></li>
                     </ul>
                 </div>
                 <div class="footer-contact">
                     <h3>Contact Info</h3>
-                    <p>Maryborough QLD</p>
+                    <p>Maryborough, Hervey Bay &amp; Gympie QLD</p>
                     <p>Phone: <a href="tel:+61416945872">0416 945 872</a></p>
                     <p>Email: <a href="mailto:support@bannistercommunications.com">support@bannistercommunications.com</a></p>
                     <p>Facebook: <a href="https://www.facebook.com/bcommunicarions" target="_blank" rel="noopener">@bcommunicarions</a></p>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2024 Bannister Communications. Security Licence #4429602 | ABN: 32861916822</p>
+                <p>&copy; 2026 Bannister Communications. Security Licence #4429602 | ABN: 32861916822</p>
                 <p>Website built by <a href="https://anchorwebco.com.au" target="_blank" rel="noopener">Anchor Web Co.</a></p>
             </div>
         </div>
@@ -428,10 +504,10 @@
     </div>
 
     <!-- Load non-critical CSS -->
-    <link rel="stylesheet" href="assets/css/style.css?v=4" media="print" onload="this.media='all'">
-    <noscript><link rel="stylesheet" href="assets/css/style.css?v=4"></noscript>
+    <link rel="stylesheet" href="assets/css/style.css?v=5" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="assets/css/style.css?v=5"></noscript>
     
     <!-- Load JS -->
-    <script src="assets/js/main.js?v=4" defer></script>
+    <script src="assets/js/main.js?v=5" defer></script>
 </body>
 </html>
