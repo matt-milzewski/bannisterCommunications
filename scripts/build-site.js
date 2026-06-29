@@ -9,7 +9,7 @@ const site = {
   url: "https://www.bannistercommunications.com",
   description:
     "Security camera installation, alarm systems, CCTV maintenance, and communications services for Maryborough homes and businesses.",
-  defaultImage: "/assets/images/Bannister_Logo.jpg",
+  defaultImage: "/assets/images/new_logo.PNG",
   phone: "0416 945 872",
   phoneHref: "tel:+61416945872",
   email: "support@bannistercommunications.com",
@@ -100,7 +100,7 @@ function nav(current = "") {
     <header class="header">
       <div class="header-content">
         <div class="logo">
-          <a href="/"><img src="/assets/images/Bannister_Logo.jpg" alt="Bannister Communications logo"></a>
+          <a href="/"><img src="/assets/images/new_logo.PNG" alt="Bannister Communications logo"></a>
         </div>
         <nav class="nav" id="nav">
           <ul>
@@ -120,7 +120,7 @@ function footer() {
       <div class="container">
         <div class="footer-content">
           <div class="footer-logo">
-            <img src="/assets/images/Bannister_Logo.jpg" alt="Bannister Communications">
+            <img src="/assets/images/new_logo.PNG" alt="Bannister Communications">
             <p>Proudly installing PSA Centrii & HiLook systems</p>
           </div>
           <div class="footer-links">
@@ -164,7 +164,7 @@ function layout({ title, description, canonical, image, type = "website", curren
   <title>${escapeHtml(pageTitle)}</title>
   <meta name="description" content="${escapeHtml(description || site.description)}">
   <link rel="canonical" href="${canonical}">
-  <link rel="icon" type="image/jpeg" href="/assets/images/Bannister_Logo.jpg">
+  <link rel="icon" type="image/png" href="/assets/images/new_logo.PNG">
   <meta property="og:title" content="${escapeHtml(pageTitle)}">
   <meta property="og:description" content="${escapeHtml(description || site.description)}">
   <meta property="og:image" content="${escapeHtml(resolvedImage)}">
@@ -251,7 +251,7 @@ function renderPost(post) {
       name: site.name,
       logo: {
         "@type": "ImageObject",
-        url: `${site.url}/assets/images/Bannister_Logo.jpg`,
+        url: `${site.url}/assets/images/new_logo.PNG`,
       },
     },
     image: post.featuredImage ? `${site.url}${post.featuredImage}` : `${site.url}${site.defaultImage}`,
@@ -373,7 +373,7 @@ function configureAdmin() {
     .replace(/const SESSION_KEY = "anchor-blog-console-session";/, 'const SESSION_KEY = "bannister-blog-console-session";')
     .replace(/const SITE_ID = "anchor-web-co";/, 'const SITE_ID = "bannister-communications";')
     .replace(/anchorwebco\.com\.au\/blog\//g, "bannistercommunications.com/blog/")
-    .replace(/\/img\/og-image\.webp/g, "/assets/images/Bannister_Logo.jpg")
+    .replace(/\/img\/og-image\.webp/g, "/assets/images/new_logo.PNG")
     .replace(
       'window.ANCHOR_CMS_API_BASE = window.ANCHOR_CMS_API_BASE || "";',
       `window.ANCHOR_CMS_API_BASE = ${JSON.stringify(apiBase)};`,

@@ -26,6 +26,8 @@ function assertNotIncludes(relativePath, unexpected) {
   }
 }
 
+const oldLogoPath = ["Bannister", "Logo.jpg"].join("_");
+
 assertIncludes("blog/index.html", "Security Tips and CCTV Advice");
 assertIncludes("blog/index.html", "How Security Camera Installation Works for Maryborough Homes");
 assertIncludes("blog/security-camera-installation-maryborough-homes/index.html", "BlogPosting");
@@ -35,5 +37,10 @@ assertIncludes("admin/index.html", "Bannister Blog Console");
 assertIncludes("sitemap.xml", "https://www.bannistercommunications.com/blog/");
 assertIncludes("sitemap.xml", "https://www.bannistercommunications.com/blog/security-camera-installation-maryborough-homes/");
 assertNotIncludes("blog/index.html", "Alarm Systems vs CCTV: What Does Your Property Need?");
+assertIncludes("blog/index.html", "/assets/images/new_logo.PNG");
+assertIncludes("blog/security-camera-installation-maryborough-homes/index.html", "/assets/images/new_logo.PNG");
+assertNotIncludes("blog/index.html", oldLogoPath);
+assertNotIncludes("blog/security-camera-installation-maryborough-homes/index.html", oldLogoPath);
+assertNotIncludes("admin/index.html", oldLogoPath);
 
 console.log("Build verification passed.");
