@@ -175,7 +175,7 @@ function layout({ title, description, canonical, image, type = "website", curren
   <meta name="twitter:description" content="${escapeHtml(description || site.description)}">
   <meta name="twitter:image" content="${escapeHtml(resolvedImage)}">
   <link rel="alternate" type="application/atom+xml" title="${site.name} Blog Feed" href="${site.url}/blog/feed.xml">
-  <link rel="stylesheet" href="/assets/css/style.css?v=5">
+  <link rel="stylesheet" href="/assets/css/style.css?v=6">
   ${schema}
 </head>
 <body>
