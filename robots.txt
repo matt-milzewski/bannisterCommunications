@@ -9,4 +9,4 @@ Sitemap: https://www.bannistercommunications.com/sitemap.xml
 # Disallow: /private/
 
 # Allow all search engines to crawl the site
-# Bannister Communications - security and communications services across Central and North Queensland
+# Bannister Communications - Wide Bay and Gympie security installers with regional Queensland coverage

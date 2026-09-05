@@ -195,11 +195,27 @@ a:focus, button:focus, input:focus, textarea:focus, select:focus {
 
 /* Hero Section */
 .hero {
-    padding: 2rem 1rem;
-    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    position: relative;
+    overflow: hidden;
+    padding: 2.5rem 1rem;
+    background:
+        radial-gradient(circle at 88% 14%, rgba(193, 39, 45, 0.10), transparent 32%),
+        linear-gradient(135deg, #f7f5f2 0%, #ffffff 68%);
+    border-bottom: 1px solid #ebe7e2;
+}
+
+.hero::before {
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(rgba(17, 17, 17, 0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(17, 17, 17, 0.025) 1px, transparent 1px);
+    background-size: 32px 32px;
+    content: '';
+    pointer-events: none;
 }
 
 .hero-content {
+    position: relative;
+    z-index: 1;
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     gap: 2rem;
@@ -214,12 +230,53 @@ a:focus, button:focus, input:focus, textarea:focus, select:focus {
 .hero h1 {
     font-size: 2rem;
     margin-bottom: 1rem;
+    max-width: 19ch;
+}
+
+.hero-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    padding: 0.45rem 0.75rem;
+    border: 1px solid rgba(193, 39, 45, 0.24);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.88);
+    color: #9f1f25;
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
 }
 
 .hero-subcopy {
     font-size: 1.1rem;
     margin-bottom: 2rem;
     color: #555;
+}
+
+.hero-subcopy--lead {
+    max-width: 58ch;
+    color: #3f3f3f;
+}
+
+.hero-service-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.hero-service-list li {
+    padding: 0.5rem 0.7rem;
+    border: 1px solid #e4ded7;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.86);
+    color: #3f3f3f;
+    font-size: 0.88rem;
+    font-weight: 650;
 }
 
 .cta-buttons {
@@ -276,7 +333,10 @@ a:focus, button:focus, input:focus, textarea:focus, select:focus {
 }
 
 .service-card {
+    display: flex;
+    flex-direction: column;
     background: #ffffff;
+    border: 1px solid #ece8e4;
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
@@ -300,6 +360,7 @@ a:focus, button:focus, input:focus, textarea:focus, select:focus {
 }
 
 .service-card p {
+    flex-grow: 1;
     padding: 0 1rem;
     color: #666;
     margin-bottom: 1.5rem;
@@ -453,7 +514,7 @@ a:focus, button:focus, input:focus, textarea:focus, select:focus {
 .locations-section,
 .location-services,
 .location-faq {
-    background: #f8f9fa;
+    background: #f6f3ef;
 }
 
 .section-heading {
@@ -492,6 +553,44 @@ a:focus, button:focus, input:focus, textarea:focus, select:focus {
 
 .location-card {
     border-top: 4px solid #C1272D;
+}
+
+.location-label {
+    display: inline-block;
+    margin-bottom: 0.75rem;
+    color: #77706a;
+    font-size: 0.74rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.location-card--home {
+    border-top-color: #d3a62b;
+    background: linear-gradient(145deg, #171717 0%, #292525 100%);
+    box-shadow: 0 12px 28px rgba(17, 17, 17, 0.16);
+}
+
+.location-card--home h3,
+.location-card--home p,
+.location-card--home .location-label,
+.location-card--home a {
+    color: #ffffff;
+}
+
+.location-card--home .location-label {
+    color: #e5c56c;
+}
+
+.location-card--home a {
+    text-decoration-color: rgba(255, 255, 255, 0.45);
+    text-underline-offset: 0.25rem;
+}
+
+.location-card--extended {
+    border: 1px solid #ddd5cd;
+    border-top: 4px solid #8b8178;
+    background: #fffdf9;
 }
 
 .location-card h3,
@@ -615,8 +714,11 @@ a:focus, button:focus, input:focus, textarea:focus, select:focus {
 
 /* Page Hero (for inner pages) */
 .page-hero {
-    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
-    padding: 2rem 1rem;
+    background:
+        radial-gradient(circle at 50% -40%, rgba(193, 39, 45, 0.13), transparent 55%),
+        linear-gradient(135deg, #f7f5f2 0%, #ffffff 100%);
+    padding: 2.75rem 1rem;
+    border-bottom: 1px solid #ebe7e2;
     text-align: center;
 }
 
@@ -800,6 +902,44 @@ a:focus, button:focus, input:focus, textarea:focus, select:focus {
     font-size: 1.1rem;
 }
 
+.service-guide-links {
+    display: grid;
+    gap: 0.8rem;
+    max-width: 1040px;
+    margin: 2rem auto 0;
+    text-align: left;
+}
+
+.service-guide-links a {
+    display: flex;
+    min-height: 92px;
+    flex-direction: column;
+    justify-content: center;
+    padding: 1rem 1.15rem;
+    border: 1px solid #e3ded8;
+    border-radius: 12px;
+    background: #ffffff;
+    color: #171717;
+    text-decoration: none;
+    box-shadow: 0 5px 16px rgba(17, 17, 17, 0.05);
+}
+
+.service-guide-links a:hover,
+.service-guide-links a:focus {
+    border-color: #C1272D;
+    color: #171717;
+    text-decoration: none;
+}
+
+.service-guide-links strong {
+    color: #C1272D;
+}
+
+.service-guide-links span {
+    color: #666666;
+    font-size: 0.9rem;
+}
+
 .services-list {
     padding: 3rem 1rem;
 }
@@ -931,6 +1071,220 @@ a:focus, button:focus, input:focus, textarea:focus, select:focus {
     background: #f8f9fa;
     padding: 3rem 1rem;
     text-align: center;
+}
+
+.service-cta .text-link {
+    width: 100%;
+    font-weight: 750;
+}
+
+.service-card--linked {
+    color: inherit;
+    text-decoration: none;
+}
+
+.service-card--linked:hover,
+.service-card--linked:focus {
+    color: inherit;
+    text-decoration: none;
+}
+
+/* SEO service and Maryborough detail pages */
+.service-detail-hero .container {
+    max-width: 900px;
+}
+
+.service-detail-hero .eyebrow {
+    display: inline-block;
+    margin-bottom: 0.85rem;
+    padding: 0.45rem 0.8rem;
+    border: 1px solid rgba(193, 39, 45, 0.24);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.72);
+}
+
+.service-detail-hero .cta-buttons {
+    justify-content: center;
+    margin: 1.5rem 0 0;
+}
+
+.detail-intro,
+.detail-benefits,
+.detail-scope,
+.related-services {
+    padding: 3.5rem 1rem;
+}
+
+.detail-intro__grid,
+.detail-scope__grid {
+    display: grid;
+    gap: 2rem;
+    align-items: center;
+}
+
+.detail-lead {
+    color: #171717;
+    font-size: 1.18rem;
+    line-height: 1.75;
+}
+
+.detail-figure {
+    position: relative;
+    margin: 0;
+    overflow: hidden;
+    border-radius: 18px;
+    background: #111111;
+    box-shadow: 0 18px 42px rgba(17, 17, 17, 0.16);
+}
+
+.detail-figure::after {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 6px;
+    content: '';
+    background: linear-gradient(90deg, #C1272D, #e7b63f);
+}
+
+.detail-figure img {
+    display: block;
+    width: 100%;
+    height: clamp(260px, 42vw, 420px);
+    object-fit: cover;
+}
+
+.detail-benefits,
+.related-services {
+    background: #f6f3ef;
+}
+
+.detail-card-grid,
+.related-service-grid {
+    display: grid;
+    gap: 1.25rem;
+}
+
+.detail-card {
+    display: flex;
+    flex-direction: column;
+    padding: 1.6rem;
+    border: 1px solid #e6ded6;
+    border-radius: 14px;
+    background: #ffffff;
+    box-shadow: 0 6px 20px rgba(17, 17, 17, 0.06);
+}
+
+.detail-card h3 {
+    margin-bottom: 0.65rem;
+    color: #C1272D;
+}
+
+.detail-card p {
+    flex-grow: 1;
+    margin-bottom: 0.75rem;
+}
+
+.detail-card a {
+    font-weight: 750;
+}
+
+.detail-scope__grid {
+    align-items: start;
+}
+
+.detail-checklist,
+.local-proof-card ul {
+    margin: 1.25rem 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.detail-checklist li,
+.local-proof-card li {
+    position: relative;
+    margin-bottom: 0.75rem;
+    padding-left: 1.75rem;
+}
+
+.detail-checklist li::before,
+.local-proof-card li::before {
+    position: absolute;
+    left: 0;
+    color: #C1272D;
+    content: '✓';
+    font-weight: 900;
+}
+
+.local-proof-card {
+    padding: 2rem;
+    border-radius: 16px;
+    background:
+        radial-gradient(circle at 100% 0, rgba(193, 39, 45, 0.26), transparent 42%),
+        #171717;
+    color: #ffffff;
+    box-shadow: 0 16px 36px rgba(17, 17, 17, 0.16);
+}
+
+.local-proof-card h2,
+.local-proof-card p,
+.local-proof-card li,
+.local-proof-card a {
+    color: #ffffff;
+}
+
+.local-proof-card__label {
+    margin-bottom: 0.5rem;
+    color: #e8bd4e !important;
+    font-size: 0.78rem;
+    font-weight: 850;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.local-proof-card a {
+    display: inline-block;
+    margin-top: 0.9rem;
+    font-weight: 750;
+    text-decoration-color: rgba(255, 255, 255, 0.45);
+    text-underline-offset: 0.25rem;
+}
+
+.detail-faq {
+    background: #ffffff;
+}
+
+.related-service-card {
+    display: flex;
+    min-height: 112px;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 1.4rem;
+    border: 1px solid #ddd5cd;
+    border-radius: 12px;
+    background: #fffdf9;
+    color: #171717;
+    text-decoration: none;
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.related-service-card:hover,
+.related-service-card:focus {
+    border-color: #C1272D;
+    color: #171717;
+    text-decoration: none;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px rgba(17, 17, 17, 0.09);
+}
+
+.related-service-card span {
+    font-size: 1.05rem;
+    font-weight: 800;
+}
+
+.related-service-card small {
+    color: #C1272D;
+    font-weight: 750;
 }
 
 .contact-highlight {
@@ -1615,6 +1969,24 @@ a:focus, button:focus, input:focus, textarea:focus, select:focus {
     
     /* FAQ */
     .faq-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .detail-intro__grid,
+    .detail-scope__grid {
+        grid-template-columns: minmax(0, 1.08fr) minmax(300px, 0.92fr);
+    }
+
+    .detail-card-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .detail-card-grid--services,
+    .related-service-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .service-guide-links {
         grid-template-columns: repeat(2, 1fr);
     }
     
