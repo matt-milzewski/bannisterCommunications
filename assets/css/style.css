@@ -309,6 +309,20 @@ a:focus, button:focus, input:focus, textarea:focus, select:focus {
     margin: 0 1rem 1.5rem;
 }
 
+.service-card--text {
+    border-top: 4px solid #C1272D;
+    padding-top: 0.5rem;
+}
+
+.communications-services {
+    background: #f8f9fa;
+    padding: 4rem 1rem;
+}
+
+.communications-services .services-grid {
+    margin-top: 2rem;
+}
+
 /* Why Local Section */
 .why-local {
     background: #f8f9fa;

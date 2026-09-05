@@ -35,5 +35,11 @@ assertIncludes("admin/index.html", "Bannister Blog Console");
 assertIncludes("sitemap.xml", "https://www.bannistercommunications.com/blog/");
 assertIncludes("sitemap.xml", "https://www.bannistercommunications.com/blog/security-camera-installation-maryborough-homes/");
 assertNotIncludes("blog/index.html", "Alarm Systems vs CCTV: What Does Your Property Need?");
+assertIncludes("index.html", "From Cairns and Townsville to Gympie");
+assertIncludes("index.html", "Point-to-Point Wireless Links");
+assertIncludes("contact.html", "Central &amp; North Queensland Service Area");
+assertIncludes("contact.html", "Rockhampton");
+assertIncludes("services.html", "Starlink Installation &amp; Setup");
+assertIncludes("services.html", "Hikvision Authorized Silver Partner for 2026");
 
 console.log("Build verification passed.");

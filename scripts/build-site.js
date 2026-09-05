@@ -8,7 +8,7 @@ const site = {
   name: "Bannister Communications",
   url: "https://www.bannistercommunications.com",
   description:
-    "Security camera installation, alarm systems, CCTV maintenance, and communications services for Maryborough homes and businesses.",
+    "Security and communications installation across Central and North Queensland for residential, commercial and rural properties.",
   defaultImage: "/assets/images/Bannister_Logo.jpg",
   phone: "0416 945 872",
   phoneHref: "tel:+61416945872",
@@ -135,7 +135,7 @@ function footer() {
           </div>
           <div class="footer-contact">
             <h3>Contact Info</h3>
-            <p>Maryborough QLD</p>
+            <p>Based in Maryborough • servicing Central &amp; North Queensland</p>
             <p>Phone: <a href="${site.phoneHref}">${site.phone}</a></p>
             <p>Email: <a href="mailto:${site.email}">${site.email}</a></p>
             <p>Facebook: <a href="https://www.facebook.com/bcommunicarions" target="_blank" rel="noopener">@bcommunicarions</a></p>
