@@ -156,8 +156,8 @@ function initContactForm() {
             }
         });
         
-        // Check honeypot field
-        const honeypot = document.getElementById('company');
+        // Check honeypot field (Formspree also silently drops on _gotcha)
+        const honeypot = document.getElementById('_gotcha');
         if (honeypot && honeypot.value.trim() !== '') {
             // Likely spam submission
             return;

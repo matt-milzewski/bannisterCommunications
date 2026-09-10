@@ -12,6 +12,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          # Full history so the build can read real per-file commit dates
+          # for sitemap <lastmod>.
+          fetch-depth: 0
 
       - name: Set up Node.js
         uses: actions/setup-node@v4

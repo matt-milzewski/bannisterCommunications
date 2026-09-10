@@ -1,24 +1,36 @@
 const fs = require("node:fs");
 const path = require("node:path");
+const { execFileSync } = require("node:child_process");
+
+const {
+  site,
+  towns,
+  escapeHtml,
+  navHtml,
+  footerHtml,
+  trustStripHtml,
+  localBusinessLd,
+  breadcrumbLd,
+  faqLd,
+  loadProjects,
+  loadReviews,
+  projectsForTown,
+  projectsForService,
+  renderProjectSection,
+  renderReviewSection,
+  injectIntoStatic,
+  STATIC_CURRENT,
+} = require("./partials");
 
 const root = path.resolve(__dirname, "..");
 const outDir = path.join(root, "_site");
 const dataPath = path.join(root, "data", "cmsBlogPosts.json");
-const site = {
-  name: "Bannister Communications",
-  url: "https://www.bannistercommunications.com",
-  description:
-    "Maryborough-based security and communications installation for Wide Bay and Gympie, with project coverage across regional Queensland.",
-  defaultImage: "/assets/images/bannister-logo.webp",
-  phone: "0416 945 872",
-  phoneHref: "tel:+61416945872",
-  email: "support@bannistercommunications.com",
-};
 
 const copyExcludes = new Set([
   ".git",
   ".github",
   "_site",
+  "content",
   "data",
   "docs",
   "node_modules",
@@ -35,21 +47,33 @@ const fileExcludes = new Set([
   "active_deterrence_system.jpg",
   "gate_keeper.jpg",
   "Home_Safety_connected.jpg",
+  "CHANGED_URLS.md",
+  "TRAFFIC_BASELINE.md",
+  "README.md",
 ]);
+
+/* ============================================================ services */
 
 const servicePages = [
   {
     slug: "cctv-installation.html",
-    title: "CCTV Installation Wide Bay",
+    title: "CCTV Installation Maryborough, Hervey Bay & Gympie",
     description:
-      "Professional CCTV installation for Wide Bay and Gympie homes, businesses and rural properties, with smart detection, remote viewing and local support.",
+      "CCTV installation for Maryborough, Hervey Bay and Gympie homes, businesses and rural properties. Smart detection and phone viewing. Call 0416 945 872.",
     name: "CCTV and Security Camera Installation",
+    short: "CCTV Installation",
+    keywords: ["cctv", "camera", "nvr", "cameras"],
     eyebrow: "CCTV designed around your property",
-    heading: "CCTV Installation Across Wide Bay & Gympie",
+    heading: "CCTV Installation Across Maryborough, Hervey Bay & Gympie",
     intro:
-      "Bannister Communications designs and installs CCTV systems for homes, shops, offices, sheds, farms and worksites across Maryborough, Hervey Bay, Bundaberg and Gympie. Every system is planned around the property, the areas that matter and how you want to review footage.",
+      "Bannister Communications designs and installs CCTV systems for homes, shops, offices, sheds, farms and worksites across Maryborough, Hervey Bay and Gympie. Every system is planned around the property, the areas that matter and how you want to review footage.",
     image: "/assets/images/HLIK-4286TH2-AI-KITPIC-SQ-500x500.webp",
     imageAlt: "HiLook CCTV camera and recorder system installed by Bannister Communications",
+    h2Benefits: "What a Well-Planned CCTV System Gives You",
+    h2Scope: "Planning, Cabling and Handover for Your CCTV Install",
+    h2Local: "CCTV Installers for Maryborough, Hervey Bay and Gympie",
+    h2Related: "Pair CCTV With Alarms, Access Control and Connectivity",
+    h2Cta: "Get a CCTV Quote for Your Property",
     benefits: [
       ["Clear evidence", "High-resolution cameras, night vision and correctly planned viewing angles help capture usable footage rather than simply adding more cameras."],
       ["Smarter alerts", "Human and vehicle detection can reduce unnecessary notifications while keeping you informed about activity around the property."],
@@ -57,31 +81,39 @@ const servicePages = [
     ],
     included: [
       "On-site assessment of entry points, access routes and camera positions",
-      "HiLook and Hikvision-compatible CCTV options selected for the site",
+      "HiLook, Hikvision and PSA Centrii camera options selected for the site",
       "NVR recording, app access and notification setup",
       "Night-view, playback and network testing",
       "Tidy installation and practical system handover",
       "Maintenance, upgrades and fault diagnosis for existing systems",
     ],
+    hikvision: true,
     questions: [
-      ["How many security cameras does my property need?", "It depends on entrances, blind spots, lighting and the evidence you need to capture. We assess the property first and recommend coverage rather than a fixed camera count."],
-      ["Can I view my CCTV from my phone?", "Yes. Compatible systems can provide live viewing, playback and alerts through a phone app. We configure access and explain the controls during handover."],
-      ["Do you install CCTV on rural properties?", "Yes. We can assess sheds, gates, driveways and remote areas, including solar or wireless options where conventional cabling is impractical."],
-      ["Can you upgrade an existing camera system?", "Often, yes. We can inspect the recorder, cameras, cabling and network before recommending repair, expansion or replacement."],
+      ["How many security cameras does my property need?", "It depends on entrances, blind spots, lighting and the evidence you need to capture. We assess the property first and recommend coverage rather than selling a fixed camera count."],
+      ["Can I view my CCTV from my phone in Maryborough, Hervey Bay or Gympie?", "Yes. Compatible systems provide live viewing, playback and alerts through a phone app on your own device, over wifi or mobile data. We set it up and explain the controls during handover."],
+      ["Do you install CCTV on rural properties around Gympie and the Fraser Coast?", "Yes. We assess sheds, gates, driveways and remote areas, including solar or point-to-point wireless options where conventional cabling is impractical."],
+      ["Can you upgrade an existing camera system?", "Often, yes. We inspect the recorder, cameras, cabling and network before recommending repair, expansion or replacement, and usually reuse cabling that is still sound."],
     ],
   },
   {
     slug: "alarm-systems.html",
-    title: "Alarm Installation Wide Bay",
+    title: "Alarm Systems Maryborough & Hervey Bay | Bannister",
     description:
-      "Alarm system installation for Wide Bay and Gympie homes and businesses, including wireless sensors, smartphone control and CCTV integration.",
+      "Alarm system installation for Maryborough, Hervey Bay and Gympie homes and businesses. Wireless sensors and smartphone control. Call 0416 945 872.",
     name: "Alarm System Installation",
+    short: "Alarm Installation",
+    keywords: ["alarm", "sensor", "siren", "pir", "keypad"],
     eyebrow: "Detection that fits the way you use the property",
-    heading: "Alarm Systems for Wide Bay Homes & Businesses",
+    heading: "Alarm System Installation for Fraser Coast Homes & Businesses",
     intro:
-      "Bannister Communications installs practical alarm systems across Maryborough, Hervey Bay, Bundaberg and Gympie. We match sensors, sirens and controls to the building so the system is straightforward to arm, manage and live with every day.",
+      "Bannister Communications installs practical alarm systems across Maryborough, Hervey Bay and Gympie. We match sensors, sirens and controls to the building so the system is straightforward to arm, manage and live with every day.",
     image: "/assets/images/dual_communication.jpg",
     imageAlt: "PSA Centrii wireless alarm system with dual communication",
+    h2Benefits: "What a Properly Fitted Alarm System Does",
+    h2Scope: "How a Fraser Coast Alarm Install Works",
+    h2Local: "Alarm Installers for Maryborough, Hervey Bay and Gympie",
+    h2Related: "Layer Your Alarm With CCTV and Access Control",
+    h2Cta: "Get an Alarm System Quote",
     benefits: [
       ["Flexible protection", "Door, window and motion sensors can be positioned around the real access points and risk areas of your home or business."],
       ["Useful notifications", "Compatible systems can provide smartphone control and alerts without turning the alarm into another complicated piece of technology."],
@@ -89,65 +121,79 @@ const servicePages = [
     ],
     included: [
       "Property assessment and sensor planning",
-      "Wireless alarm options for difficult-to-cable buildings",
+      "Wireless alarm options for difficult-to-cable Queenslanders and older buildings",
       "Door, window and movement detection",
       "Sirens, keypads and compatible phone controls",
       "Integration options with cameras and active deterrence",
       "Testing, user setup and clear handover",
     ],
     questions: [
-      ["Are wireless alarm systems reliable?", "A professionally planned wireless system can be a strong option for existing homes and buildings where new cabling would be disruptive. We assess signal conditions and sensor placement before installation."],
-      ["Can an alarm send alerts to my phone?", "Compatible systems can send notifications and allow remote control through a smartphone. Available features depend on the equipment and communication setup selected."],
-      ["Can an alarm work with CCTV?", "Yes. Cameras, alarms and active deterrence can be designed as complementary layers so you can detect activity and then review what happened."],
-      ["Do you install alarms for commercial properties?", "Yes. We work with homes, shops, offices, sheds and other commercial or rural sites throughout our service area."],
+      ["Are wireless alarm systems reliable in older Maryborough homes?", "A professionally planned wireless system is a strong option for existing homes and heritage buildings where new cabling would be disruptive. We assess signal conditions and sensor placement before installation."],
+      ["Can an alarm send alerts to my phone?", "Compatible systems send notifications and allow remote arming and disarming through a smartphone app. Available features depend on the equipment and communication setup selected."],
+      ["Can an alarm work with my CCTV cameras?", "Yes. Cameras, alarms and active deterrence can be designed as complementary layers so you can detect activity and then review what happened."],
+      ["Do you install alarms for commercial properties on the Fraser Coast?", "Yes. We work with homes, shops, offices, sheds and other commercial or rural sites throughout Maryborough, Hervey Bay and Gympie."],
     ],
   },
   {
     slug: "starlink-wireless.html",
-    title: "Starlink Installer Wide Bay",
+    title: "Starlink Installer Maryborough & Fraser Coast | Bannister",
     description:
-      "Starlink setup and point-to-point wireless links across Wide Bay and Gympie for homes, farms, sheds and businesses needing dependable connectivity.",
+      "Starlink setup and point-to-point wireless links for Maryborough, Hervey Bay and Gympie homes, farms and rural businesses. Call 0416 945 872.",
     name: "Starlink and Point-to-Point Wireless Installation",
+    short: "Starlink & Wireless Setup",
+    keywords: ["starlink", "wireless", "point-to-point", "link", "dish", "internet"],
     eyebrow: "Connectivity beyond the main building",
-    heading: "Starlink & Wireless Links for Regional Properties",
+    heading: "Starlink & Point-to-Point Wireless for Rural Fraser Coast Properties",
     intro:
-      "Bannister Communications helps regional homes, farms and businesses position and connect Starlink equipment and extend networks between buildings. We assess obstructions, mounting, cable routes, power and line of sight before recommending a practical setup.",
+      "Bannister Communications helps rural homes, farms and businesses around Maryborough, Hervey Bay and Gympie position and connect Starlink equipment and extend networks between buildings. We assess obstructions, mounting, cable routes, power and line of sight before recommending a practical setup.",
     image: "/assets/images/Cabling.jpeg",
     imageAlt: "Neatly installed communications and network cabling",
+    h2Benefits: "Why Placement and Cabling Decide Whether Starlink Works",
+    h2Scope: "Setting Up Starlink and Wireless Links on a Rural Block",
+    h2Local: "Starlink and Wireless Installers Serving Gympie, Maryborough and Hervey Bay",
+    h2Related: "Connect Cameras and Networks to Your New Link",
+    h2Cta: "Get a Starlink or Wireless Link Quote",
     benefits: [
-      ["Better placement", "A clear view of the sky, secure mounting and a sensible cable route are considered before Starlink equipment is installed."],
+      ["Better placement", "A clear view of the sky, secure mounting and a sensible cable route are worked out before Starlink equipment goes up."],
       ["Building-to-building links", "Point-to-point wireless links can connect a house, shed, office, gate or workshop without trenching a data cable across the whole property."],
-      ["One connected system", "We can plan the link alongside Wi-Fi, data cabling, cameras and other networked equipment so each part works together."],
+      ["One connected system", "We plan the link alongside wifi, data cabling, cameras and other networked equipment so each part works together."],
     ],
     included: [
       "Site and obstruction assessment",
-      "Starlink dish position and mounting advice",
-      "Cable routing and equipment connection",
-      "Point-to-point wireless link planning",
+      "Starlink dish position and mounting",
+      "Weatherproof cable routing and equipment connection",
+      "Point-to-point wireless link planning between buildings",
       "Line-of-sight, network and performance testing",
       "Connection of sheds, offices, gates and remote camera locations",
     ],
     questions: [
       ["Where should a Starlink dish be installed?", "It needs a clear view of the sky and a secure position with a workable cable path. We assess the property rather than assuming the roof is automatically the best location."],
-      ["Can you connect internet from my house to a shed?", "Often, yes. A point-to-point wireless link can bridge two buildings when there is suitable line of sight, power and mounting at both ends."],
-      ["Does a wireless link replace Wi-Fi inside the building?", "The link carries the network between locations. Each building may still need an access point or wired network to provide useful coverage inside and around it."],
-      ["Do you supply Starlink internet plans?", "No. Starlink service and account arrangements remain with Starlink. Bannister Communications assists with the physical setup, positioning, cabling and local network connection."],
+      ["Can you connect internet from my Gympie house to a shed or second dwelling?", "Often, yes. A point-to-point wireless link can bridge two buildings when there is suitable line of sight, power and mounting at both ends."],
+      ["Does a wireless link replace the wifi inside the building?", "The link carries the network between locations. Each building may still need an access point or wired network to give useful coverage inside and around it."],
+      ["Do you supply Starlink internet plans?", "No. Starlink service and account arrangements stay with Starlink. We handle the physical setup, positioning, cabling and local network connection."],
     ],
   },
   {
     slug: "data-cabling-antennas.html",
-    title: "Data Cabling & TV Antennas",
+    title: "Data Cabling & TV Antennas Maryborough | Bannister",
     description:
-      "Data cabling, network points and TV antenna installation across Maryborough, Wide Bay and Gympie with tidy cable routes and tested connections.",
+      "Data cabling, network points and TV antenna installation across Maryborough, Hervey Bay and Gympie. Tidy, tested connections. Call 0416 945 872.",
     name: "Data Cabling and TV Antenna Installation",
+    short: "Cabling & Antenna Work",
+    keywords: ["cabling", "cat6", "cat 6", "antenna", "network point", "data point", "tv"],
     eyebrow: "Reliable connections, neatly installed",
-    heading: "Data Cabling & TV Antenna Installation",
+    heading: "Data Cabling & TV Antenna Installation in Maryborough",
     intro:
-      "Bannister Communications installs and troubleshoots data cabling, network points and TV antenna systems across Maryborough, Hervey Bay, Bundaberg and Gympie. We diagnose the connection first, plan a tidy route and test the result before handover.",
+      "Bannister Communications installs and troubleshoots data cabling, network points and TV antenna systems across Maryborough, Hervey Bay and Gympie. We diagnose the connection first, plan a tidy route and test the result before handover.",
     image: "/assets/images/Cat6StockImage.jpeg",
     imageAlt: "Cat 6 data cabling used for home and business networks",
+    h2Benefits: "What Tidy, Tested Cabling and Antennas Give You",
+    h2Scope: "Planning Cable Routes and Antenna Work in Older Homes",
+    h2Local: "Cabling and Antenna Installers for Maryborough, Hervey Bay and Gympie",
+    h2Related: "Cabling That Supports Your Cameras and Network",
+    h2Cta: "Get a Cabling or Antenna Quote",
     benefits: [
-      ["Dependable wired networks", "Cat 6 cabling and correctly positioned network points provide a stable foundation for offices, cameras, access points and connected equipment."],
+      ["Dependable wired networks", "Cat 6 cabling and correctly positioned network points give offices, cameras, access points and connected equipment a stable foundation."],
       ["Clearer TV reception", "Antenna alignment, outlets, cabling and signal conditions are assessed so the real cause of reception problems can be addressed."],
       ["Tidy practical work", "Cable routes and equipment positions are planned around how the building is used, with connections tested before completion."],
     ],
@@ -160,13 +206,126 @@ const servicePages = [
       "Testing and clear labelling where appropriate",
     ],
     questions: [
-      ["Is wired data cabling better than Wi-Fi?", "They solve different problems. Wired connections provide a stable backbone for fixed equipment, while Wi-Fi provides mobility. Many good networks use both."],
-      ["Can you add a network point for a camera or access point?", "Yes. We can assess the cable route and connection requirements for cameras, wireless access points and other network equipment."],
-      ["Why is my TV picture pixelating?", "Possible causes include antenna alignment, damaged cabling, weak or excessive signal levels, poor connections or local interference. Testing helps identify the actual fault."],
-      ["Do you work on rural properties?", "Yes. We service rural and semi-rural properties and can combine cabling with wireless links where buildings are spread across the site."],
+      ["Is wired data cabling better than wifi?", "They solve different problems. Wired connections give fixed equipment a stable backbone, while wifi gives mobility. Most good networks use both."],
+      ["Can you add a network point for a camera or access point?", "Yes. We assess the cable route and connection requirements for cameras, wireless access points and other network equipment."],
+      ["Why is my TV picture pixelating in Maryborough or Hervey Bay?", "Possible causes include antenna alignment, damaged cabling, weak or excessive signal levels, poor connections or local interference. Testing identifies the actual fault."],
+      ["Do you work on rural properties around Gympie?", "Yes. We service rural and semi-rural properties and can combine cabling with wireless links where buildings are spread across the site."],
     ],
   },
 ];
+
+/* =============================================================== towns */
+
+const townPages = [
+  {
+    slug: "maryborough.html",
+    name: "Maryborough",
+    region: "the Fraser Coast",
+    distance: "",
+    title: "Security Systems & CCTV Maryborough | Local Installer",
+    metaDescription:
+      "Maryborough CCTV, alarm, Starlink and cabling installation from a local, licensed installer with 25+ years' experience. Free quotes — call 0416 945 872.",
+    h1: "CCTV, Alarms & Security Systems in Maryborough",
+    image: "/assets/images/home-safety-connected.webp",
+    lead:
+      "Maryborough is home for Bannister Communications. Craig Bannister has lived and worked here for more than 25 years, and most weeks the van never leaves the Fraser Coast. We install and maintain CCTV, alarm systems, Starlink and point-to-point wireless, data cabling and TV antennas for Maryborough homes, businesses, sheds and rural blocks — with the short response times and after-install support that only a local installer can give.",
+    suburbs: [
+      "Maryborough CBD", "Granville", "Tinana", "Maryborough West", "Aldershot", "Oakhurst",
+      "Bidwill", "St Helens", "Tiaro", "Howard", "Torbanlea", "Bauple",
+    ],
+    suburbNote:
+      "That covers the city and the surrounding Fraser Coast towns we work in most weeks. If your address is not listed, call — we almost certainly still get there.",
+    considerationsHeading: "What to Think About for a Maryborough Installation",
+    considerations: [
+      ["Heritage homes and older wiring",
+        "Maryborough has one of the best-preserved 19th-century streetscapes in Queensland, and a lot of our residential work is in genuine Queenslanders and post-war homes around the CBD, Granville and Tinana. Older homes mean tight roof spaces, brittle wiring, VJ walls you do not want to cut into, and switchboards that predate modern safety switches. We route cameras and sensors with as little disruption to the building fabric as possible, use existing cavities and eaves lines, and flag anything electrical that a licensed electrician should look at before we go further."],
+      ["Rural blocks, sheds and second dwellings",
+        "Plenty of Maryborough addresses come with acreage, a machinery shed, a granny flat or a pump a long way from the house. Those jobs are about distance and power — getting a reliable connection, and where needed footage, back to the house without trenching hundreds of metres of cable. Point-to-point wireless links, solar cameras and a properly planned network make it work."],
+      ["Industrial estate and highway businesses",
+        "We look after businesses in the Maryborough industrial area and along the Bruce Highway — yards, workshops, transport depots and retail. Commercial jobs need coverage of gates, loading areas and till points, footage that holds up if it is ever needed for an insurance claim or police, and often access control so you know who opened up."],
+    ],
+    servicesHeading: "Security & Communications Services in Maryborough",
+    wiredWirelessQ: "Wired or wireless cameras for a heritage Maryborough home?",
+    wiredWirelessA:
+      "In an older Maryborough home we usually run wired cameras where a cable can go through an existing cavity or along the eaves — it is the most reliable option and there is no battery to replace up a ladder. Where the building fabric makes cabling invasive, such as solid VJ walls or no roof access over an extension, a well-placed wireless or solar camera avoids cutting into the house. We will walk the property and tell you which parts suit which.",
+    projectKeyword: null,
+    faqExtra: [],
+  },
+  {
+    slug: "hervey-bay.html",
+    name: "Hervey Bay",
+    region: "the Fraser Coast",
+    distance: "about 35 minutes from our Maryborough base",
+    title: "Security Cameras Hervey Bay | CCTV & Alarm Installation",
+    metaDescription:
+      "Security camera and CCTV installation in Hervey Bay for homes, businesses, holiday lets and body corporates. Alarms and cabling too. Call 0416 945 872.",
+    h1: "Security Camera & CCTV Installation in Hervey Bay",
+    image: "/assets/images/home-safety-connected.webp",
+    lead:
+      "Bannister Communications installs and services CCTV, alarm systems, and Starlink and wireless connectivity for homes and businesses right across Hervey Bay. Craig Bannister is based in Maryborough, about 35 minutes from the Esplanade, and has worked on Fraser Coast properties for more than 25 years. Every job is quoted and designed around your property — the entry points that matter, the way you want to review footage, and the conditions the equipment has to survive close to the water.",
+    suburbs: [
+      "Pialba", "Scarness", "Torquay", "Urangan", "Point Vernon", "Urraween", "Kawungan",
+      "Wondunna", "Eli Waters", "Craignish", "Dundowran Beach", "Booral", "River Heads",
+      "Burrum Heads", "Toogoom",
+    ],
+    suburbNote:
+      "We cover the whole of Hervey Bay and the nearby Burrum and Booral coast. Call to confirm timing for your street.",
+    considerationsHeading: "What to Think About for a Hervey Bay Installation",
+    considerations: [
+      ["Salt air and coastal corrosion",
+        "Hervey Bay's sea air is hard on hardware. Camera housings, screws, brackets and cable glands that would last a decade inland can pit and seize within a couple of years a few streets back from the water in Torquay, Scarness, Point Vernon and Urangan. We specify marine-grade or powder-coated housings, stainless fixings and properly sealed cable entries for coastal installs, and we run through a simple wipe-down routine at handover so the cameras keep a clear picture."],
+      ["Holiday lets and body corporate properties",
+        "A large share of Hervey Bay housing is holiday rental, unit blocks and body-corporate managed. Those jobs have their own requirements — common-property coverage that respects unit privacy, footage access for a manager who is not on site, and systems a cleaner or caretaker can arm without a training session. We have set up shared and multi-tenant systems around Urangan and Torquay and can work with your body corporate or letting agent."],
+      ["A phone-first, retiree-friendly setup",
+        "Many of our Hervey Bay customers are retired and want one thing above all: open an app, see the front door, the caravan or the garage, wherever they are. We set the app up on your device, not just ours, show you how live view, playback and alerts work, and leave written notes. If someone changes it later, you can still call us."],
+    ],
+    servicesHeading: "Security & Communications Services in Hervey Bay",
+    wiredWirelessQ: "Wired or wireless cameras for a coastal Hervey Bay property?",
+    wiredWirelessA:
+      "Close to the water we lean wired wherever the cable run is practical — a wired camera has no battery to fail, and a sealed cable entry keeps salt air out of the electronics. Wireless and solar cameras still have their place for a back fence, a jetty or a spot with no power, and we will tell you honestly which parts of your property suit which.",
+    projectKeyword: null,
+    faqExtra: [],
+  },
+  {
+    slug: "gympie.html",
+    name: "Gympie",
+    region: "the Gympie region and Mary Valley",
+    distance: "about an hour south of our Maryborough base",
+    title: "Security Systems Gympie | CCTV & Camera Installation",
+    metaDescription:
+      "CCTV, alarm, Starlink and camera installation for Gympie homes, farms and acreage — from the CBD to the Mary Valley and Cooloola coast. Call 0416 945 872.",
+    h1: "CCTV & Security Camera Installation in Gympie",
+    image: "/assets/images/home-safety-connected.webp",
+    lead:
+      "Gympie is regular territory for Bannister Communications — about an hour south of our Maryborough base. We install CCTV, alarm systems, Starlink and point-to-point wireless, and data and antenna cabling for Gympie homes, businesses, farms and acreage properties, from the CBD and Southside out to the Mary Valley and the Cooloola coast.",
+    suburbs: [
+      "Gympie CBD", "Southside", "Jones Hill", "Monkland", "Victory Heights", "The Palms",
+      "Pie Creek", "Widgee", "Kandanga", "Imbil", "Tin Can Bay", "Rainbow Beach",
+      "Cooloola Cove", "Goomeri", "Kilkivan",
+    ],
+    suburbNote:
+      "This is the area we aim to cover around Gympie. Some of the outer Mary Valley and North Burnett towns depend on the week's schedule — call and we will tell you straight away whether we can get to your address. (Craig to confirm the full travel list.)",
+    considerationsHeading: "What to Think About for a Gympie Installation",
+    considerations: [
+      ["Acreage and distance from town",
+        "A lot of Gympie properties are on acreage where the front gate is a few hundred metres from the house and the nearest neighbour is further still. That changes the job — the priority is usually the driveway entrance, the shed and the house approach, and the challenge is getting power and a signal to a camera that far out. We use solar cameras, point-to-point wireless links and long-range planning so you can see the gate from the kitchen."],
+      ["Flood-prone low areas",
+        "Parts of Gympie — the CBD, around Kidd Bridge, the low spots along the Mary River — flood, and they flood fast. We mount recorders and power supplies well above known flood heights, keep cabling out of the areas that go under first, and can set a system up so footage is held off-site rather than only on a box that might not survive."],
+      ["Farm sheds, fuel and equipment theft",
+        "Rural theft — diesel, tools, quad bikes, stock — is why a lot of Gympie farmers call us. Those jobs are about the shed, the fuel tank and the tracks onto the property, usually with no mains power nearby. Active-deterrence cameras that trigger a light and a spoken warning, combined with solar power and a wireless link back to the house, do more than a camera that only records."],
+      ["Starlink where NBN does not reach",
+        "Beyond the Gympie town edge, fixed internet gets patchy or disappears. If your property cannot get a usable NBN or fixed-line connection, Starlink is often the practical answer — we position and mount the dish for a clear view of the sky, run weatherproof cabling and set up the network so it also carries your cameras and phones."],
+    ],
+    servicesHeading: "Security & Communications Services in Gympie",
+    wiredWirelessQ: "Wired, wireless or solar cameras for a rural Gympie property?",
+    wiredWirelessA:
+      "On acreage it is usually a mix. We run wired cameras around the house and shed where there is power and a workable cable path, and use solar cameras with a point-to-point wireless link for the front gate, a back paddock or a second shed with no mains power. The right combination depends on distance, tree cover and where you actually need to see.",
+    projectKeyword: null,
+    faqExtra: [],
+  },
+];
+
+/* ============================================================= helpers */
 
 function ensureDir(dir) {
   fs.mkdirSync(dir, { recursive: true });
@@ -188,15 +347,6 @@ function copyStatic(src, dest) {
   fs.copyFileSync(src, dest);
 }
 
-function escapeHtml(value = "") {
-  return String(value)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
-}
-
 function stripHtml(value = "") {
   return String(value)
     .replace(/<script[\s\S]*?<\/script>/gi, " ")
@@ -214,7 +364,9 @@ function stripHtml(value = "") {
 
 function isoDate(value) {
   const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? new Date().toISOString().slice(0, 10) : date.toISOString().slice(0, 10);
+  return Number.isNaN(date.getTime())
+    ? new Date().toISOString().slice(0, 10)
+    : date.toISOString().slice(0, 10);
 }
 
 function readableDate(value) {
@@ -225,73 +377,41 @@ function readableDate(value) {
   }).format(new Date(isoDate(value)));
 }
 
-function nav(current = "") {
-  const items = [
-    ["/", "Home", "home"],
-    ["/about.html", "About", "about"],
-    ["/services.html", "Services", "services"],
-    ["/blog/", "Blog", "blog"],
-    ["/contact.html", "Contact", "contact"],
-  ];
-  return `
-    <header class="header">
-      <div class="header-content">
-        <div class="logo">
-          <a href="/"><img src="/assets/images/bannister-logo.webp" alt="Bannister Communications logo"></a>
-        </div>
-        <nav class="nav" id="nav">
-          <ul>
-            ${items
-              .map(([href, label, key]) => `<li><a href="${href}"${current === key ? ' class="current"' : ""}>${label}</a></li>`)
-              .join("\n")}
-          </ul>
-        </nav>
-        <button class="menu-toggle" id="menu-toggle" aria-label="Toggle navigation">Menu</button>
-      </div>
-    </header>`;
+/** Most recent git commit date (YYYY-MM-DD) across the given files, else newest mtime. */
+function lastmodFor(relPaths) {
+  let best = "";
+  for (const rel of relPaths) {
+    const abs = path.join(root, rel);
+    if (!fs.existsSync(abs)) continue;
+    let stamp = "";
+    try {
+      stamp = execFileSync("git", ["log", "-1", "--format=%cs", "--", rel], {
+        cwd: root,
+        encoding: "utf8",
+      }).trim();
+    } catch {
+      stamp = "";
+    }
+    if (!stamp) stamp = new Date(fs.statSync(abs).mtime).toISOString().slice(0, 10);
+    if (stamp > best) best = stamp;
+  }
+  return best || new Date().toISOString().slice(0, 10);
 }
 
-function footer() {
-  return `
-    <footer class="footer">
-      <div class="container">
-        <div class="footer-content">
-          <div class="footer-logo">
-            <img src="/assets/images/bannister-logo.webp" alt="Bannister Communications">
-            <p>Proudly installing PSA Centrii & HiLook systems</p>
-          </div>
-          <div class="footer-links">
-            <h3>Popular Services</h3>
-            <ul>
-              <li><a href="/cctv-installation.html">CCTV Installation</a></li>
-              <li><a href="/alarm-systems.html">Alarm Systems</a></li>
-              <li><a href="/starlink-wireless.html">Starlink &amp; Wireless</a></li>
-              <li><a href="/data-cabling-antennas.html">Data &amp; Antennas</a></li>
-              <li><a href="/maryborough.html">Maryborough</a></li>
-            </ul>
-          </div>
-          <div class="footer-contact">
-            <h3>Contact Info</h3>
-            <p>Based in Maryborough • servicing Wide Bay, Gympie &amp; regional QLD</p>
-            <p>Phone: <a href="${site.phoneHref}">${site.phone}</a></p>
-            <p>Email: <a href="mailto:${site.email}">${site.email}</a></p>
-            <p>Facebook: <a href="https://www.facebook.com/bcommunicarions" target="_blank" rel="noopener">@bcommunicarions</a></p>
-          </div>
-        </div>
-        <div class="footer-bottom">
-          <p>&copy; 2024 Bannister Communications. Security Licence #4429602 | ABN: 32861916822</p>
-          <p>Website built by <a href="https://anchorwebco.com.au" target="_blank" rel="noopener">Anchor Web Co.</a></p>
-        </div>
-      </div>
-    </footer>
-    <div class="mobile-cta-bar">
-      <a href="${site.phoneHref}" class="mobile-cta-call">Call Now</a>
-      <a href="/contact.html" class="mobile-cta-quote">Get Quote</a>
-    </div>`;
+function jsonLd(objects) {
+  return objects
+    .filter(Boolean)
+    .map((obj) => `<script type="application/ld+json">${JSON.stringify(obj)}</script>`)
+    .join("\n  ");
 }
 
-function layout({ title, description, canonical, image, type = "website", current = "blog", body, schema = "" }) {
-  const pageTitle = `${title} | ${site.name}`;
+function layout({ title, description, canonical, image, type = "website", current = "", body, schema = "" }) {
+  // Titles are authored to length. Only append the brand to short standalone
+  // titles (e.g. blog post headlines) that have room for it.
+  const pageTitle =
+    title.includes("|") || title.includes(site.name) || title.length >= 44
+      ? title
+      : `${title} | ${site.name}`;
   const resolvedImage = image?.startsWith("http") ? image : `${site.url}${image || site.defaultImage}`;
   return `<!DOCTYPE html>
 <html lang="en-AU">
@@ -312,64 +432,62 @@ function layout({ title, description, canonical, image, type = "website", curren
   <meta name="twitter:description" content="${escapeHtml(description || site.description)}">
   <meta name="twitter:image" content="${escapeHtml(resolvedImage)}">
   <link rel="alternate" type="application/atom+xml" title="${site.name} Blog Feed" href="${site.url}/blog/feed.xml">
-  <link rel="stylesheet" href="/assets/css/style.css?v=6">
+  <link rel="stylesheet" href="${site.css}">
+  ${localBusinessLd()}
   ${schema}
 </head>
 <body>
-  ${nav(current)}
+  ${navHtml(current)}
   <main>${body}</main>
-  ${footer()}
-  <script src="/assets/js/main.js?v=4" defer></script>
+  ${footerHtml()}
+  <script src="${site.js}" defer></script>
 </body>
 </html>
 `;
 }
 
-function breadcrumbSchema(items) {
-  return {
-    "@type": "BreadcrumbList",
-    itemListElement: items.map(([name, url], index) => ({
-      "@type": "ListItem",
-      position: index + 1,
-      name,
-      item: `${site.url}${url}`,
-    })),
-  };
-}
+/* ===================================================== service page */
 
 function serviceSchema(page) {
   return {
     "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "Service",
-        "@id": `${site.url}/${page.slug}#service`,
-        name: page.name,
-        url: `${site.url}/${page.slug}`,
-        description: page.description,
-        serviceType: page.name,
-        areaServed: [
-          { "@type": "AdministrativeArea", name: "Wide Bay-Burnett, Queensland" },
-          { "@type": "City", name: "Maryborough, Queensland" },
-          { "@type": "City", name: "Hervey Bay, Queensland" },
-          { "@type": "City", name: "Bundaberg, Queensland" },
-          { "@type": "City", name: "Gympie, Queensland" },
-        ],
-        provider: {
-          "@type": "ProfessionalService",
-          "@id": `${site.url}/#business`,
-          name: site.name,
-          telephone: "+61416945872",
-          url: site.url,
-        },
-      },
-      breadcrumbSchema([
-        ["Home", "/"],
-        ["Services", "/services.html"],
-        [page.name, `/${page.slug}`],
-      ]),
+    "@type": "Service",
+    "@id": `${site.url}/${page.slug}#service`,
+    name: page.name,
+    url: `${site.url}/${page.slug}`,
+    description: page.description,
+    serviceType: page.name,
+    areaServed: [
+      { "@type": "City", name: "Maryborough, Queensland" },
+      { "@type": "City", name: "Hervey Bay, Queensland" },
+      { "@type": "City", name: "Gympie, Queensland" },
+      { "@type": "AdministrativeArea", name: "Fraser Coast, Queensland" },
     ],
+    provider: { "@id": `${site.url}/#business` },
   };
+}
+
+function townLinksBlock(heading) {
+  const cards = towns
+    .map(
+      (t) => `
+        <a class="related-service-card" href="/${t.slug}">
+          <span>${escapeHtml(t.name)}</span>
+          <small>View ${escapeHtml(t.name)} services</small>
+        </a>`,
+    )
+    .join("");
+  return `
+      <section class="detail-scope">
+        <div class="container">
+          <div class="section-heading">
+            <p class="eyebrow">Service areas</p>
+            <h2>${escapeHtml(heading)}</h2>
+            <p>Bannister Communications is based in Maryborough and installs this service across the Fraser Coast and Gympie. Pick your area for local detail, suburbs and FAQs.</p>
+          </div>
+          <div class="related-service-grid">${cards}</div>
+        </div>
+      </section>`;
 }
 
 function relatedServiceLinks(currentSlug) {
@@ -405,15 +523,57 @@ function renderServicePage(page) {
         </article>`,
     )
     .join("");
-  const schema = serviceSchema(page);
+
+  const hikvisionSection = page.hikvision
+    ? `
+      <section class="detail-scope">
+        <div class="container detail-scope__grid">
+          <div>
+            <p class="eyebrow">Genuine equipment</p>
+            <h2>An Authorised Hikvision Silver Partner in the Wide Bay</h2>
+            <p>Bannister Communications is an Authorised Hikvision Australia Silver Value Added Solution Partner. For you that means the cameras and recorders we supply are genuine Australian stock with a valid manufacturer warranty, current firmware and security updates, and support that does not evaporate because the gear came through a grey-import channel. We also install HiLook and PSA Centrii where they are the better fit for the site and budget.</p>
+          </div>
+          <aside class="local-proof-card">
+            <p class="local-proof-card__label">What partner status covers</p>
+            <h2>Genuine Stock &amp; Real Warranty</h2>
+            <ul>
+              <li>Authorised Australian Hikvision supply</li>
+              <li>Valid manufacturer warranty and firmware support</li>
+              <li>Correct system design, not a box off a shelf</li>
+              <li>Local support after the install</li>
+            </ul>
+          </aside>
+        </div>
+      </section>`
+    : "";
+
+  const projects = projectsForService(loadProjects(), page.keywords);
+  const projectSection = renderProjectSection({
+    projects,
+    heading: `Recent ${page.name.toLowerCase()} work`,
+    intro: "",
+  });
+
+  const schema = jsonLd([
+    serviceSchema(page),
+    {
+      "@context": "https://schema.org",
+      ...breadcrumbLd([
+        ["Home", "/"],
+        ["Services", "/services.html"],
+        [page.name, `/${page.slug}`],
+      ]),
+    },
+    faqLd(page.questions),
+  ]);
 
   return layout({
     title: page.title,
     description: page.description,
     canonical: `${site.url}/${page.slug}`,
     image: page.image,
-    current: "services",
-    schema: `<script type="application/ld+json">${JSON.stringify(schema)}</script>`,
+    current: page.slug,
+    schema,
     body: `
       <nav class="breadcrumbs" aria-label="Breadcrumb">
         <div class="container"><a href="/">Home</a> / <a href="/services.html">Services</a> / <span>${escapeHtml(page.name)}</span></div>
@@ -422,13 +582,14 @@ function renderServicePage(page) {
         <div class="container">
           <p class="eyebrow">${escapeHtml(page.eyebrow)}</p>
           <h1>${escapeHtml(page.heading)}</h1>
-          <p class="hero-subtitle">Based in Maryborough and serving Wide Bay and Gympie, with larger regional projects available by arrangement.</p>
+          <p class="hero-subtitle">Based in Maryborough and serving Hervey Bay, Gympie and the wider Fraser Coast.</p>
           <div class="cta-buttons">
             <a href="/contact.html" class="btn btn-primary">Request a Quote</a>
             <a href="${site.phoneHref}" class="btn btn-secondary">Call ${site.phone}</a>
           </div>
         </div>
       </section>
+      ${trustStripHtml()}
       <section class="detail-intro">
         <div class="container detail-intro__grid">
           <div>
@@ -444,7 +605,7 @@ function renderServicePage(page) {
         <div class="container">
           <div class="section-heading">
             <p class="eyebrow">Practical outcomes</p>
-            <h2>A System Designed to Work in the Real World</h2>
+            <h2>${escapeHtml(page.h2Benefits)}</h2>
           </div>
           <div class="detail-card-grid">${benefitCards}</div>
         </div>
@@ -453,28 +614,30 @@ function renderServicePage(page) {
         <div class="container detail-scope__grid">
           <div>
             <p class="eyebrow">What we can help with</p>
-            <h2>Planning, Installation & Handover</h2>
+            <h2>${escapeHtml(page.h2Scope)}</h2>
             <ul class="detail-checklist">${included}</ul>
           </div>
           <aside class="local-proof-card">
             <p class="local-proof-card__label">Local confidence</p>
-            <h2>Wide Bay & Gympie Based</h2>
-            <p>Bannister Communications is based in Maryborough and regularly services the Fraser Coast, Bundaberg and Gympie regions.</p>
+            <h2>${escapeHtml(page.short)} From a Local, Licensed Installer</h2>
+            <p>Bannister Communications is based in Maryborough and regularly works across Hervey Bay, Gympie and the surrounding Wide Bay.</p>
             <ul>
-              <li>Security Licence #4429602</li>
-              <li>Hikvision Authorized Silver Partner 2026</li>
+              <li>Security Licence #${site.licence}</li>
+              <li>Hikvision Australia Silver Partner 2026</li>
               <li>Residential, commercial and rural work</li>
-              <li>Central and North Queensland projects by arrangement</li>
             </ul>
             <a href="/maryborough.html">View our Maryborough service area</a>
           </aside>
         </div>
       </section>
+      ${hikvisionSection}
+      ${projectSection}
+      ${townLinksBlock(page.h2Local)}
       <section class="faq-section detail-faq">
         <div class="container">
           <div class="section-heading">
             <p class="eyebrow">Common questions</p>
-            <h2>What to Know Before Requesting a Quote</h2>
+            <h2>${escapeHtml(page.name)}: Common Questions</h2>
           </div>
           <div class="faq-grid">${questions}</div>
         </div>
@@ -483,14 +646,14 @@ function renderServicePage(page) {
         <div class="container">
           <div class="section-heading">
             <p class="eyebrow">Related services</p>
-            <h2>Build the Right Combination for Your Property</h2>
+            <h2>${escapeHtml(page.h2Related)}</h2>
           </div>
           <div class="related-service-grid">${relatedServiceLinks(page.slug)}</div>
         </div>
       </section>
       <section class="cta-section">
         <div class="container">
-          <h2>Talk to a Local Installer</h2>
+          <h2>${escapeHtml(page.h2Cta)}</h2>
           <p>Tell us about the property, location and result you need. We’ll help you work out the practical next step.</p>
           <div class="cta-buttons">
             <a href="/contact.html" class="btn btn-primary">Request a Quote</a>
@@ -501,127 +664,258 @@ function renderServicePage(page) {
   });
 }
 
-function renderMaryboroughPage() {
-  const pageUrl = `${site.url}/maryborough.html`;
-  const schema = {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "Service",
-        "@id": `${pageUrl}#service`,
-        name: "Security and Communications Installation in Maryborough",
-        url: pageUrl,
-        description:
-          "Maryborough-based CCTV, alarm, Starlink, wireless link, antenna and data cabling installation for local homes, businesses and rural properties.",
-        areaServed: { "@type": "City", name: "Maryborough, Queensland" },
-        provider: {
-          "@type": "ProfessionalService",
-          "@id": `${site.url}/#business`,
-          name: site.name,
-          telephone: "+61416945872",
-          url: site.url,
-        },
-      },
-      breadcrumbSchema([
-        ["Home", "/"],
-        ["Maryborough services", "/maryborough.html"],
-      ]),
+/* ======================================================== town page */
+
+const TOWN_SERVICE_BLOCKS = [
+  {
+    slug: "cctv-installation.html",
+    h3: "CCTV & security cameras",
+    copy: (t) =>
+      `HiLook, Hikvision and PSA Centrii cameras with NVR recording, smart human and vehicle detection and phone viewing, planned around the entry points and blind spots on your ${t} property. We assess lighting and camera angles on site rather than selling a fixed camera count, and we set up recording, playback and alerts before we leave.`,
+    anchor: "CCTV installation",
+  },
+  {
+    slug: "alarm-systems.html",
+    h3: "Alarm systems",
+    copy: () =>
+      `PSA Centrii wireless alarms with door, window and motion sensors, sirens and smartphone arming — matched to how you actually use the building so it is easy to live with. Wireless sensors suit existing and older homes where new cabling would mean cutting into walls and ceilings.`,
+    anchor: "alarm systems",
+  },
+  {
+    slug: "starlink-wireless.html",
+    h3: "Starlink & point-to-point wireless",
+    copy: () =>
+      `Starlink dish positioning and setup, and point-to-point wireless links between the house, sheds, gates and second dwellings where trenching cable is not practical. We check line of sight, mounting and power at both ends before quoting, and set the network up so it also carries cameras and phones.`,
+    anchor: "Starlink and wireless links",
+  },
+  {
+    slug: "data-cabling-antennas.html",
+    h3: "Data cabling & TV antennas",
+    copy: () =>
+      `Cat 6 data points, cabling for cameras and access points, and TV antenna installation, alignment and fault-finding — all tidily run, labelled where it helps, and tested before handover. We diagnose the actual cause of a reception or network fault rather than replacing parts on a guess.`,
+    anchor: "data cabling and TV antennas",
+  },
+];
+
+const TOWN_PROCESS = [
+  ["Free on-site assessment", "We walk the property with you, look at entry points, lighting, cable paths, power and internet, and talk through what you actually want the system to do."],
+  ["An itemised written quote", "You get a quote that lists each part and what it costs, so you can add or drop things and see the effect. No pressure, no obligation."],
+  ["Tidy installation", "Cameras, sensors and cabling are mounted and routed to last, with as little disruption to the building as possible. Most homes are a one-day job."],
+  ["Testing and handover", "We test night vision, recording, playback, alerts and remote access, set the app up on your own phone, and leave written notes."],
+  ["Local support afterwards", "If something needs adjusting, expanding or servicing later, you are calling a local installer, not a call centre."],
+];
+
+// TODO (Craig): once we have a typical 4-camera home CCTV price range, add it to
+// the first answer below. See content/INTAKE.md and CHANGED_URLS.md section 3.
+function townFaq(town) {
+  const other = towns.filter((t) => t.slug !== town.slug).map((t) => t.name);
+  return [
+    [
+      `How much does CCTV installation cost in ${town.name}?`,
+      `It depends on how many cameras you need, whether existing cabling can be reused, and how far the recorder sits from the cameras. A straightforward four-camera system for a single-storey home sits at the lower end; add a second storey, a detached shed, coastal-grade housings, or solar and wireless for an outbuilding, and it climbs. We do not publish a fixed price because every property is different — but every quote is free and itemised, so you can see exactly what each part costs before you decide. Call ${site.phone}.`,
     ],
-  };
+    [
+      `Can I watch my ${town.name} cameras from my phone?`,
+      `Yes. We set the app up on your own phone or tablet, not just ours, and show you live view, playback and motion alerts before we leave. It works over home wifi and mobile data, so you can check the property from anywhere.`,
+    ],
+    [town.wiredWirelessQ, town.wiredWirelessA],
+    [
+      `Can my neighbour point a camera at my house?`,
+      `A home CCTV camera that incidentally captures part of a neighbouring property or the footpath is generally allowed, but deliberately targeting the inside of someone's home or yard, or recording audio of private conversations, can cross a line. We aim cameras at your own property and mask areas we do not need to see. For a dispute or a specific legal question, the Queensland Office of the Information Commissioner (oic.qld.gov.au) is the place to start — we install to good practice, but we do not give legal advice.`,
+    ],
+    [
+      `Do you upgrade existing systems or only new installs?`,
+      `Both. We regularly inspect an existing recorder, cameras, cabling and network, keep the parts that are still sound — often the cabling — and replace or add only what needs it. If a system just needs a service, a re-aim or a firmware update, we will tell you that.`,
+    ],
+    [
+      `Alarm or CCTV — which do I need?`,
+      `They do different jobs. An alarm is about getting people out and getting a response when someone is somewhere they should not be. CCTV is about seeing what happened and identifying who. Most security-conscious ${town.name} homes end up with both, layered together — see our <a href="/alarm-systems.html">alarm systems</a> and <a href="/cctv-installation.html">CCTV installation</a> pages — and we can phase it if budget is tight.`,
+    ],
+    [
+      `Do you do access control and key fob systems for ${town.name} schools and businesses?`,
+      `Yes. We install Gate Keeper intercom and access control alongside CCTV and alarms — key-fob and keypad entry, door strikes and electric gates, and multi-user access with time restrictions — for schools, childcare, clubs and commercial sites.`,
+    ],
+    ...town.faqExtra,
+  ];
+}
+
+function townSchema(town, faq) {
+  return jsonLd([
+    {
+      "@context": "https://schema.org",
+      "@type": "Service",
+      "@id": `${site.url}/${town.slug}#service`,
+      name: `Security and Communications Installation in ${town.name}`,
+      url: `${site.url}/${town.slug}`,
+      description: town.metaDescription,
+      serviceType: "CCTV, alarm, Starlink and data cabling installation",
+      areaServed: { "@type": "City", name: `${town.name}, Queensland` },
+      provider: { "@id": `${site.url}/#business` },
+    },
+    {
+      "@context": "https://schema.org",
+      ...breadcrumbLd([
+        ["Home", "/"],
+        [`${town.name} services`, `/${town.slug}`],
+      ]),
+    },
+    faqLd(faq.map(([q, a]) => [q, stripHtml(a)])),
+  ]);
+}
+
+function renderTownPage(town) {
+  const projects = projectsForTown(loadProjects(), town.name);
+  const reviews = loadReviews();
+  const faq = townFaq(town);
+  const otherTowns = towns.filter((t) => t.slug !== town.slug);
+
+  const suburbList = town.suburbs.map((s) => `<li>${escapeHtml(s)}</li>`).join("\n            ");
+
+  const serviceBlocks = TOWN_SERVICE_BLOCKS.map(
+    (b) => `
+        <article class="detail-card">
+          <h3>${escapeHtml(b.h3)}</h3>
+          <p>${escapeHtml(b.copy(town.name))}</p>
+          <a href="/${b.slug}">${escapeHtml(b.anchor)} in ${escapeHtml(town.name)}</a>
+        </article>`,
+  ).join("");
+
+  const considerations = town.considerations
+    .map(
+      ([h3, p]) => `
+          <article class="detail-card">
+            <h3>${escapeHtml(h3)}</h3>
+            <p>${escapeHtml(p)}</p>
+          </article>`,
+    )
+    .join("");
+
+  const faqItems = faq
+    .map(
+      ([q, a]) => `
+        <article class="faq-item">
+          <h3>${escapeHtml(q)}</h3>
+          <p>${a}</p>
+        </article>`,
+    )
+    .join("");
+
+  const distanceClause = town.distance ? ` (${town.distance})` : "";
 
   return layout({
-    title: "CCTV & Security Maryborough",
-    description:
-      "Maryborough-based CCTV, alarm, Starlink, wireless, antenna and data cabling installation for local homes, businesses and rural properties.",
-    canonical: pageUrl,
-    image: "/assets/images/home-safety-connected.webp",
-    current: "services",
-    schema: `<script type="application/ld+json">${JSON.stringify(schema)}</script>`,
+    title: town.title,
+    description: town.metaDescription,
+    canonical: `${site.url}/${town.slug}`,
+    image: town.image,
+    current: town.slug,
+    schema: townSchema(town, faq),
     body: `
       <nav class="breadcrumbs" aria-label="Breadcrumb">
-        <div class="container"><a href="/">Home</a> / <span>Maryborough services</span></div>
+        <div class="container"><a href="/">Home</a> / <span>${escapeHtml(town.name)} services</span></div>
       </nav>
       <section class="page-hero service-detail-hero">
         <div class="container">
-          <p class="eyebrow">Our home service area</p>
-          <h1>CCTV, Security &amp; Communications in Maryborough</h1>
-          <p class="hero-subtitle">A Maryborough-based installer for local homes, businesses, sheds, farms and worksites.</p>
+          <p class="eyebrow">${escapeHtml(town.name)} security &amp; communications</p>
+          <h1>${escapeHtml(town.h1)}</h1>
+          <p class="hero-subtitle">CCTV, alarms, Starlink and cabling for ${escapeHtml(town.name)} homes and businesses${escapeHtml(distanceClause)}.</p>
           <div class="cta-buttons">
-            <a href="/contact.html" class="btn btn-primary">Request a Maryborough Quote</a>
+            <a href="/contact.html" class="btn btn-primary">Request a ${escapeHtml(town.name)} Quote</a>
             <a href="${site.phoneHref}" class="btn btn-secondary">Call ${site.phone}</a>
           </div>
         </div>
       </section>
+      ${trustStripHtml()}
       <section class="detail-intro">
         <div class="container detail-intro__grid">
           <div>
-            <p class="detail-lead">Bannister Communications is based in Maryborough and provides local installation and support throughout the city and surrounding Fraser Coast communities.</p>
-            <p>We design practical CCTV, alarm and communications systems around the property rather than forcing every customer into the same package. That includes clear advice, tidy installation, system testing and a straightforward handover.</p>
+            <p class="detail-lead">${escapeHtml(town.lead)}</p>
           </div>
           <figure class="detail-figure">
-            <img src="/assets/images/home-safety-connected.webp" alt="PSA Centrii home security equipment available from Bannister Communications in Maryborough" width="600" height="400" loading="eager" fetchpriority="high">
+            <img src="${town.image}" alt="Home security equipment installed by Bannister Communications for ${escapeHtml(town.name)} properties" width="600" height="400" loading="eager" fetchpriority="high">
           </figure>
         </div>
       </section>
       <section class="detail-benefits">
         <div class="container">
           <div class="section-heading">
-            <p class="eyebrow">Maryborough services</p>
-            <h2>Security, Connectivity & Cabling from One Local Team</h2>
+            <p class="eyebrow">${escapeHtml(town.name)} coverage</p>
+            <h2>Suburbs We Cover Around ${escapeHtml(town.name)}</h2>
           </div>
-          <div class="detail-card-grid detail-card-grid--services">
-            ${servicePages
+          <ul class="location-list">
+            ${suburbList}
+          </ul>
+          <p class="location-note">${escapeHtml(town.suburbNote)}</p>
+        </div>
+      </section>
+      <section class="detail-scope">
+        <div class="container">
+          <div class="section-heading">
+            <p class="eyebrow">Services</p>
+            <h2>${escapeHtml(town.servicesHeading)}</h2>
+          </div>
+          <div class="detail-card-grid detail-card-grid--services">${serviceBlocks}</div>
+        </div>
+      </section>
+      <section class="detail-benefits">
+        <div class="container">
+          <div class="section-heading">
+            <p class="eyebrow">Local knowledge</p>
+            <h2>${escapeHtml(town.considerationsHeading)}</h2>
+          </div>
+          <div class="detail-card-grid">${considerations}</div>
+        </div>
+      </section>
+      <section class="detail-scope">
+        <div class="container">
+          <div class="section-heading">
+            <p class="eyebrow">What to expect</p>
+            <h2>How a ${escapeHtml(town.name)} Installation Runs</h2>
+          </div>
+          <ul class="detail-checklist detail-checklist--wide">
+            ${TOWN_PROCESS.map(
+              ([h, p]) => `<li><strong>${escapeHtml(h)}.</strong> ${escapeHtml(p)}</li>`,
+            ).join("\n            ")}
+          </ul>
+        </div>
+      </section>
+      ${renderProjectSection({
+        projects,
+        heading: `Recent work in ${town.name}`,
+        intro: "",
+      })}
+      ${renderReviewSection({ reviews, heading: "What customers say" })}
+      <section class="faq-section detail-faq">
+        <div class="container">
+          <div class="section-heading">
+            <p class="eyebrow">${escapeHtml(town.name)} questions</p>
+            <h2>${escapeHtml(town.name)} Security: Common Questions</h2>
+          </div>
+          <div class="faq-grid">${faqItems}</div>
+        </div>
+      </section>
+      <section class="related-services">
+        <div class="container">
+          <div class="section-heading">
+            <p class="eyebrow">Nearby</p>
+            <h2>Other Areas We Cover</h2>
+          </div>
+          <div class="related-service-grid">
+            ${otherTowns
               .map(
-                (page) => `
-                  <article class="detail-card">
-                    <h3>${escapeHtml(page.name)}</h3>
-                    <p>${escapeHtml(page.description)}</p>
-                    <a href="/${page.slug}">Explore ${escapeHtml(page.name.toLowerCase())}</a>
-                  </article>`,
+                (t) => `
+            <a class="related-service-card" href="/${t.slug}">
+              <span>${escapeHtml(t.name)}</span>
+              <small>View ${escapeHtml(t.name)} services</small>
+            </a>`,
               )
               .join("")}
           </div>
         </div>
       </section>
-      <section class="detail-scope">
-        <div class="container detail-scope__grid">
-          <div>
-            <p class="eyebrow">Local coverage</p>
-            <h2>Maryborough & Nearby Communities</h2>
-            <p>Contact us to confirm availability for your address. Our regular local coverage includes:</p>
-            <ul class="location-list">
-              <li>Maryborough</li><li>Maryborough West</li><li>Granville</li><li>Tinana</li>
-              <li>Oakhurst</li><li>St Helens</li><li>Walkers Point</li><li>Fraser Coast rural properties</li>
-            </ul>
-          </div>
-          <aside class="local-proof-card">
-            <p class="local-proof-card__label">Why local matters</p>
-            <h2>Support After Installation</h2>
-            <p>You get a nearby business that understands regional properties and remains available for questions, maintenance and future additions.</p>
-            <ul>
-              <li>More than 25 years of industry experience</li>
-              <li>Security Licence #4429602</li>
-              <li>Hikvision Authorized Silver Partner 2026</li>
-              <li>Residential, commercial and rural installations</li>
-            </ul>
-          </aside>
-        </div>
-      </section>
-      <section class="faq-section detail-faq">
-        <div class="container">
-          <div class="section-heading"><p class="eyebrow">Local questions</p><h2>Planning a Maryborough Installation</h2></div>
-          <div class="faq-grid">
-            <article class="faq-item"><h3>What properties do you service in Maryborough?</h3><p>We work with homes, shops, offices, workshops, sheds, farms and other residential, commercial and rural properties.</p></article>
-            <article class="faq-item"><h3>Can you inspect an existing security system?</h3><p>Yes. We can assess existing cameras, alarms, cabling and network equipment before recommending maintenance, expansion or replacement.</p></article>
-            <article class="faq-item"><h3>Do you service areas outside Maryborough?</h3><p>Yes. Wide Bay and Gympie are our core service region, with suitable Central and North Queensland projects available by arrangement.</p></article>
-            <article class="faq-item"><h3>How do I request a quote?</h3><p>Send the property location, service required and a short description through our quote form, or call 0416 945 872 to discuss the job.</p></article>
-          </div>
-        </div>
-      </section>
       <section class="cta-section">
         <div class="container">
-          <h2>Request a Maryborough Quote</h2>
-          <p>Tell us what you want to protect or connect and we’ll recommend a practical next step.</p>
+          <h2>Request a ${escapeHtml(town.name)} Quote</h2>
+          <p>Tell us what you want to protect or connect and we’ll recommend a practical next step. Free, itemised quotes.</p>
           <div class="cta-buttons">
             <a href="/contact.html" class="btn btn-primary">Request a Quote</a>
             <a href="${site.phoneHref}" class="btn btn-secondary">Call ${site.phone}</a>
@@ -631,12 +925,27 @@ function renderMaryboroughPage() {
   });
 }
 
+/* ============================================================== write */
+
 function writeSeoPages() {
-  fs.writeFileSync(path.join(outDir, "maryborough.html"), renderMaryboroughPage());
+  for (const town of townPages) {
+    fs.writeFileSync(path.join(outDir, town.slug), renderTownPage(town));
+  }
   for (const page of servicePages) {
     fs.writeFileSync(path.join(outDir, page.slug), renderServicePage(page));
   }
 }
+
+function injectStaticPartials() {
+  for (const filename of Object.keys(STATIC_CURRENT)) {
+    const file = path.join(outDir, filename);
+    if (!fs.existsSync(file)) continue;
+    const html = fs.readFileSync(file, "utf8");
+    fs.writeFileSync(file, injectIntoStatic(html, filename));
+  }
+}
+
+/* =============================================================== blog */
 
 function readPosts() {
   if (!fs.existsSync(dataPath)) return [];
@@ -692,17 +1001,11 @@ function renderPost(post) {
     description: post.seoDescription || post.description,
     datePublished: isoDate(post.date),
     dateModified: post.updatedAt || isoDate(post.date),
-    author: {
-      "@type": "Organization",
-      name: site.name,
-    },
+    author: { "@type": "Organization", name: site.name },
     publisher: {
       "@type": "Organization",
       name: site.name,
-      logo: {
-        "@type": "ImageObject",
-        url: `${site.url}/assets/images/bannister-logo.webp`,
-      },
+      logo: { "@type": "ImageObject", url: `${site.url}/assets/images/bannister-logo.webp` },
     },
     image: post.featuredImage ? `${site.url}${post.featuredImage}` : `${site.url}${site.defaultImage}`,
     mainEntityOfPage: canonical,
@@ -757,27 +1060,37 @@ function writeBlog(posts) {
   }
 }
 
+/* ============================================================ sitemap */
+
 function writeSitemap(posts) {
-  const now = new Date().toISOString().slice(0, 10);
+  const generatorInputs = ["scripts/build-site.js", "scripts/partials.js", "content/projects.yml", "content/reviews.yml"];
+  const generatedLastmod = lastmodFor(generatorInputs);
+
   const basePages = [
-    ["/", "1.0"],
-    ["/services.html", "0.9"],
-    ["/contact.html", "0.9"],
-    ["/maryborough.html", "0.9"],
-    ["/hervey-bay.html", "0.8"],
-    ["/gympie.html", "0.8"],
-    ["/cctv-installation.html", "0.9"],
-    ["/alarm-systems.html", "0.8"],
-    ["/starlink-wireless.html", "0.8"],
-    ["/data-cabling-antennas.html", "0.8"],
-    ["/about.html", "0.7"],
-    ["/blog/", "0.7"],
+    { url: "/", priority: "1.0", src: ["index.html"] },
+    { url: "/services.html", priority: "0.9", src: ["services.html"] },
+    { url: "/contact.html", priority: "0.9", src: ["contact.html"] },
+    { url: "/about.html", priority: "0.7", src: ["about.html"] },
+    { url: "/maryborough.html", priority: "0.9", src: generatorInputs },
+    { url: "/hervey-bay.html", priority: "0.9", src: generatorInputs },
+    { url: "/gympie.html", priority: "0.9", src: generatorInputs },
+    { url: "/cctv-installation.html", priority: "0.9", src: generatorInputs },
+    { url: "/alarm-systems.html", priority: "0.8", src: generatorInputs },
+    { url: "/starlink-wireless.html", priority: "0.8", src: generatorInputs },
+    { url: "/data-cabling-antennas.html", priority: "0.8", src: generatorInputs },
+    { url: "/blog/", priority: "0.7", src: ["scripts/build-site.js", "data/cmsBlogPosts.json"] },
   ];
+
   const urls = [
-    ...basePages.map(([url, priority]) => ({ loc: `${site.url}${url}`, lastmod: now, changefreq: "monthly", priority })),
+    ...basePages.map((page) => ({
+      loc: `${site.url}${page.url}`,
+      lastmod: page.src === generatorInputs ? generatedLastmod : lastmodFor(page.src),
+      changefreq: "monthly",
+      priority: page.priority,
+    })),
     ...posts.map((post) => ({
       loc: `${site.url}/blog/${post.slug}/`,
-      lastmod: isoDate(post.date),
+      lastmod: isoDate(post.updatedAt || post.date),
       changefreq: "monthly",
       priority: "0.6",
     })),
@@ -854,6 +1167,7 @@ function main() {
   }
 
   writeSeoPages();
+  injectStaticPartials();
   const posts = readPosts();
   writeBlog(posts);
   writeSitemap(posts);

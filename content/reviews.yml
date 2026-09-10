@@ -1,0 +1,47 @@
+# Bannister Communications — real customer reviews
+# ================================================
+# Verbatim only. Do not paraphrase, do not merge, do not add any review that is
+# not genuinely on Google (or another named platform the customer left it on).
+# No aggregateRating or Review schema is generated from this file — Google's
+# guidelines forbid marking up reviews sourced from Google. These render as
+# visible content only.
+#
+# Fields:
+#   name:    reviewer's display name as shown on the platform
+#   rating:  stars as displayed (1-5). Defaults to 5 if omitted.
+#   text:    the full review, word for word
+#   date:    "Month YYYY" as shown on the platform  (leave "" if not yet checked)
+#   source:  "Google" | "Yellow Pages" | ...
+#   url:     link to the review / listing ("Read on <source>")
+#
+# The four entries below are the reviews already shown on the homepage, carried
+# across verbatim. TODO (Matt/Craig): open the Google Business Profile and fill
+# in the `date` for each, and confirm every `rating` is 5.
+
+- name: "David Puckering"
+  rating: 5
+  text: "Craigs knowledge and experience is exceptional. He arrived on time and did a great job improving WiFi. I highly recommend Bannister Communications."
+  date: ""
+  source: "Google"
+  url: "https://www.google.com/maps/search/?api=1&query=Bannister+Communications+Maryborough+QLD"
+
+- name: "Deb Tidbury"
+  rating: 5
+  text: "If your looking at putting a security system on your house, I can highly recommend Craig from Bannister Communication, competitive price, easy to deal with and excellent on going support."
+  date: ""
+  source: "Google"
+  url: "https://www.google.com/maps/search/?api=1&query=Bannister+Communications+Maryborough+QLD"
+
+- name: "Brooke"
+  rating: 5
+  text: "Best technician, highly recommend"
+  date: ""
+  source: "Google"
+  url: "https://www.google.com/maps/search/?api=1&query=Bannister+Communications+Maryborough+QLD"
+
+- name: "Kellie-Ann Groth"
+  rating: 5
+  text: "Great experience with Bannister communications. The installation of our new home security system was completed professionally and efficiently. Everything was explained clearly. The service was friendly and reliable. Very happy with the result."
+  date: ""
+  source: "Google"
+  url: "https://www.google.com/maps/search/?api=1&query=Bannister+Communications+Maryborough+QLD"
