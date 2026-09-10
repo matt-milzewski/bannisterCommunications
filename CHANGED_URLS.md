@@ -97,6 +97,13 @@ function handler(event) {
 }
 ```
 
+### 2c. Formspree settings (dashboard, not code)
+
+The form now ships a `_gotcha` honeypot, which Formspree drops silently. If the
+Bannister Formspree plan supports it, also switch on **reCAPTCHA** for form
+`xyzdakbn` in the Formspree form settings — 347 spam hits against 15 real leads
+justifies it. No code change needed.
+
 ### 2b. TODO for Matt — confirm with Craig before finalising
 
 - Does Craig still offer **computer maintenance** and **software purchase / remote
