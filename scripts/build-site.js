@@ -392,7 +392,6 @@ function lastmodFor(relPaths) {
     } catch {
       stamp = "";
     }
-    if (!stamp) stamp = fs.statSync(abs).toISOString?.() ?? "";
     if (!stamp) stamp = new Date(fs.statSync(abs).mtime).toISOString().slice(0, 10);
     if (stamp > best) best = stamp;
   }
@@ -706,12 +705,14 @@ const TOWN_PROCESS = [
   ["Local support afterwards", "If something needs adjusting, expanding or servicing later, you are calling a local installer, not a call centre."],
 ];
 
+// TODO (Craig): once we have a typical 4-camera home CCTV price range, add it to
+// the first answer below. See content/INTAKE.md and CHANGED_URLS.md section 3.
 function townFaq(town) {
   const other = towns.filter((t) => t.slug !== town.slug).map((t) => t.name);
   return [
     [
       `How much does CCTV installation cost in ${town.name}?`,
-      `It depends on how many cameras you need, whether existing cabling can be reused, and how far the recorder sits from the cameras. A straightforward four-camera system for a single-storey home sits at the lower end; add a second storey, a detached shed, coastal-grade housings or solar and wireless for an outbuilding and it climbs. TODO: Craig to confirm a typical range. Every quote is free and itemised, so you can see what each part costs — call ${site.phone}.`,
+      `It depends on how many cameras you need, whether existing cabling can be reused, and how far the recorder sits from the cameras. A straightforward four-camera system for a single-storey home sits at the lower end; add a second storey, a detached shed, coastal-grade housings, or solar and wireless for an outbuilding, and it climbs. We do not publish a fixed price because every property is different — but every quote is free and itemised, so you can see exactly what each part costs before you decide. Call ${site.phone}.`,
     ],
     [
       `Can I watch my ${town.name} cameras from my phone?`,

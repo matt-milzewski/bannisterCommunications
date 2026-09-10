@@ -126,6 +126,29 @@ function handler(event) {
 
 ---
 
+## 3b. Deferred: stock hero / section images (brief section 11)
+
+Per the brief's own priority order ("cut from the bottom"; "do not let image
+work eat the session"), photo sourcing is the one item left for you. Everything
+that moves rankings — titles, town-page rebuilds, internal links, schema,
+redirects, sitemap, form spam protection — is done.
+
+What is in place so you can finish it quickly:
+
+- `assets/IMAGE_CREDITS.md` — the recording template, sourcing rules and the
+  full shot list (which slot on which page, what to look for).
+- `assets/projects/` + its README — where Craig's real job photos go; they feed
+  the "Recent work" section on the town and service pages automatically.
+- `scripts/optimize-images.js` — add a row to `responsiveJobs`, drop the
+  original in `assets/src/` (git-ignored), run `npm run images:optimize`, and it
+  writes the 480/960/1440 WebP set (+ JPEG hero fallback).
+- `assets/css/style.css` — `.page-hero--image` hero-band styles are ready
+  (H1 over image); the markup pattern is commented above those rules and in
+  IMAGE_CREDITS.md.
+
+Until photos land, the town and service pages use a real PSA Centrii equipment
+photo as the hero figure — genuine, not misleading — and nothing is broken.
+
 ## 4. Suggestions for Craig (blog — not actioned, his call)
 
 - The published post `security-camera-installation-maryborough-homes` uses the old
