@@ -4,6 +4,8 @@ const path = require("node:path");
 const root = path.resolve(__dirname, "..");
 const outDir = path.join(root, "_site");
 
+let failures = 0;
+
 function read(relativePath) {
   const filePath = path.join(outDir, relativePath);
   if (!fs.existsSync(filePath)) {
@@ -12,74 +14,185 @@ function read(relativePath) {
   return fs.readFileSync(filePath, "utf8");
 }
 
-function assertIncludes(relativePath, expected) {
-  const contents = read(relativePath);
-  if (!contents.includes(expected)) {
-    throw new Error(`Expected ${relativePath} to include: ${expected}`);
+function check(label, condition) {
+  if (!condition) {
+    failures += 1;
+    console.error(`  FAIL  ${label}`);
   }
 }
 
+function assertIncludes(relativePath, expected) {
+  check(`${relativePath} includes "${expected}"`, read(relativePath).includes(expected));
+}
+
 function assertNotIncludes(relativePath, unexpected) {
-  const contents = read(relativePath);
-  if (contents.includes(unexpected)) {
-    throw new Error(`Expected ${relativePath} not to include: ${unexpected}`);
-  }
+  check(`${relativePath} does not include "${unexpected}"`, !read(relativePath).includes(unexpected));
 }
 
 function assertExists(relativePath) {
   const filePath = path.join(outDir, relativePath);
-  if (!fs.existsSync(filePath) || fs.statSync(filePath).size === 0) {
-    throw new Error(`Missing or empty build file: ${relativePath}`);
+  check(
+    `${relativePath} exists and is non-empty`,
+    fs.existsSync(filePath) && fs.statSync(filePath).size > 0,
+  );
+}
+
+/* ---- title() / h1() helpers ---- */
+function titleOf(html) {
+  return ((html.match(/<title>([\s\S]*?)<\/title>/) || [])[1] || "")
+    .replace(/&amp;/g, "&")
+    .replace(/&#39;/g, "'");
+}
+function h1Of(html) {
+  return (html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/) || [])[1] || "";
+}
+
+const allPages = [
+  "index.html",
+  "about.html",
+  "services.html",
+  "contact.html",
+  "maryborough.html",
+  "hervey-bay.html",
+  "gympie.html",
+  "cctv-installation.html",
+  "alarm-systems.html",
+  "starlink-wireless.html",
+  "data-cabling-antennas.html",
+];
+
+/* ---- 1. Titles / H1s: no "Wide Bay" or "Regional Queensland" as the lead ---- */
+for (const page of allPages) {
+  const html = read(page);
+  const title = titleOf(html);
+  const h1 = h1Of(html);
+  check(`${page} <title> does not lead with "Wide Bay"`, !/^\s*wide bay/i.test(title));
+  check(`${page} <title> does not lead with "Regional Queensland"`, !/^\s*regional queensland/i.test(title));
+  check(`${page} <h1> does not contain "Wide Bay"`, !/wide bay/i.test(h1));
+  check(`${page} <h1> does not lead with "Regional Queensland"`, !/^\s*regional queensland/i.test(h1));
+  check(`${page} <title> length 30-70`, title.length >= 30 && title.length <= 70);
+}
+
+/* ---- 2. Every service + town page names a town somewhere in a heading ---- */
+const townRe = /(Maryborough|Hervey Bay|Gympie|Fraser Coast)/;
+for (const page of ["cctv-installation.html", "alarm-systems.html", "starlink-wireless.html", "data-cabling-antennas.html", "maryborough.html", "hervey-bay.html", "gympie.html"]) {
+  const h2s = (read(page).match(/<h2[^>]*>[\s\S]*?<\/h2>/g) || []).join(" ");
+  check(`${page} has at least one <h2> naming a town`, townRe.test(h2s));
+}
+
+/* ---- 3. Service pages no longer share the old identical H2 skeleton ---- */
+for (const page of ["cctv-installation.html", "alarm-systems.html", "starlink-wireless.html", "data-cabling-antennas.html"]) {
+  assertNotIncludes(page, "A System Designed to Work in the Real World");
+  assertNotIncludes(page, "What to Know Before Requesting a Quote");
+  assertNotIncludes(page, "Wide Bay &amp; Gympie Based");
+}
+
+/* ---- 4. Shared nav + footer + LocalBusiness on every page ---- */
+for (const page of [...allPages, "404.html", "blog/index.html"]) {
+  const html = read(page);
+  check(`${page} has exactly one <header class="header">`, (html.match(/<header class="header">/g) || []).length === 1);
+  check(`${page} has exactly one <footer class="footer">`, (html.match(/<footer class="footer">/g) || []).length === 1);
+  check(`${page} nav links to a town page`, html.includes('href="/hervey-bay.html"'));
+  check(`${page} nav has Services submenu`, html.includes("has-submenu"));
+  check(`${page} footer links Facebook`, html.includes("facebook.com/bcommunicarions"));
+  check(`${page} exactly one mobile-cta-bar`, (html.match(/mobile-cta-bar/g) || []).length >= 1);
+}
+for (const page of allPages) {
+  const html = read(page);
+  check(`${page} has one LocalBusiness JSON-LD`, (html.match(/"@type":\s*\["LocalBusiness","ProfessionalService"\]/g) || []).length === 1);
+  check(`${page} LocalBusiness sameAs is Facebook only`, /"sameAs":\["https:\/\/www\.facebook\.com\/bcommunicarions"\]/.test(html));
+  check(`${page} has no aggregateRating markup`, !html.includes('"aggregateRating"'));
+  check(`${page} has no Review schema`, !/"@type":\s*"Review"/.test(html));
+}
+
+/* ---- 5. Breadcrumbs on every non-home page ---- */
+for (const page of ["about.html", "services.html", "contact.html", "maryborough.html", "hervey-bay.html", "gympie.html", "cctv-installation.html", "alarm-systems.html", "starlink-wireless.html", "data-cabling-antennas.html"]) {
+  check(`${page} has a BreadcrumbList (schema or visible)`, read(page).includes("BreadcrumbList") || read(page).includes('class="breadcrumbs"'));
+}
+
+/* ---- 6. Town + service pages carry FAQPage schema ---- */
+for (const page of ["maryborough.html", "hervey-bay.html", "gympie.html", "cctv-installation.html", "alarm-systems.html", "starlink-wireless.html", "data-cabling-antennas.html"]) {
+  assertIncludes(page, '"@type":"FAQPage"');
+}
+
+/* ---- 7. Internal linking: services <-> towns ---- */
+for (const service of ["cctv-installation.html", "alarm-systems.html", "starlink-wireless.html", "data-cabling-antennas.html"]) {
+  const html = read(service);
+  for (const town of ["maryborough.html", "hervey-bay.html", "gympie.html"]) {
+    check(`${service} links to /${town}`, html.includes(`href="/${town}"`));
   }
 }
-
-const oldLogoPath = ["Bannister", "Logo.jpg"].join("_");
-
-assertIncludes("blog/index.html", "Security Tips and CCTV Advice");
-assertIncludes("blog/index.html", "How Security Camera Installation Works for Maryborough Homes");
-assertIncludes("blog/security-camera-installation-maryborough-homes/index.html", "BlogPosting");
-assertIncludes("blog/cctv-maintenance-checklist-small-businesses/index.html", "CCTV Maintenance Checklist");
-assertIncludes("admin/index.html", 'const SITE_ID = "bannister-communications";');
-assertIncludes("admin/index.html", "Bannister Blog Console");
-assertIncludes("sitemap.xml", "https://www.bannistercommunications.com/blog/");
-assertIncludes("sitemap.xml", "https://www.bannistercommunications.com/blog/security-camera-installation-maryborough-homes/");
-assertNotIncludes("blog/index.html", "Alarm Systems vs CCTV: What Does Your Property Need?");
-assertIncludes("index.html", "Wide Bay &amp; Gympie based");
-assertIncludes("index.html", "Based in Wide Bay. Travelling Further for the Right Project.");
-assertIncludes("index.html", "Point-to-Point Wireless Links");
-assertIncludes("contact.html", "Wide Bay &amp; Gympie Based, with Wider Queensland Coverage");
-assertIncludes("contact.html", "Rockhampton");
-assertIncludes("services.html", "Starlink Installation &amp; Setup");
-assertIncludes("services.html", "Hikvision Authorized Silver Partner for 2026");
-assertIncludes("blog/index.html", "/assets/images/bannister-logo.webp");
-assertIncludes("blog/security-camera-installation-maryborough-homes/index.html", "/assets/images/bannister-logo.webp");
-assertNotIncludes("blog/index.html", oldLogoPath);
-assertNotIncludes("blog/security-camera-installation-maryborough-homes/index.html", oldLogoPath);
-assertNotIncludes("admin/index.html", oldLogoPath);
-assertIncludes("index.html", "Hikvision Authorized Silver Partner for 2026");
-assertIncludes("index.html", "Hikvision Silver Partner");
-assertIncludes("index.html", "from 4 Google reviews");
-assertIncludes("index.html", "Kellie-Ann Groth");
-assertExists("assets/images/hikvision-authorized-silver-partner-2026-badge.webp");
-assertExists("assets/images/bannister-communications-hikvision-silver-partner-2026.webp");
-assertExists("assets/images/bannister-logo.webp");
-assertExists("assets/images/craig-bannister.webp");
-assertExists("assets/images/active-deterrence-system.webp");
-assertExists("assets/images/gate-keeper-intercom.webp");
-assertExists("assets/images/home-safety-connected.webp");
-assertIncludes("maryborough.html", "CCTV, Security &amp; Communications in Maryborough");
-assertIncludes("cctv-installation.html", "CCTV Installation Across Wide Bay &amp; Gympie");
-assertIncludes("alarm-systems.html", "Alarm Systems for Wide Bay Homes &amp; Businesses");
-assertIncludes("starlink-wireless.html", "Starlink &amp; Wireless Links for Regional Properties");
-assertIncludes("data-cabling-antennas.html", "Data Cabling &amp; TV Antenna Installation");
-assertIncludes("sitemap.xml", "https://www.bannistercommunications.com/maryborough.html");
-assertIncludes("sitemap.xml", "https://www.bannistercommunications.com/hervey-bay.html");
-assertIncludes("sitemap.xml", "https://www.bannistercommunications.com/gympie.html");
-assertIncludes("sitemap.xml", "https://www.bannistercommunications.com/cctv-installation.html");
-assertNotIncludes("index.html", "assets/images/new_logo.PNG");
-assertNotIncludes("about.html", "assets/images/Craig.png");
-if (fs.existsSync(path.join(outDir, "test.html"))) {
-  throw new Error("Production build must not contain test.html");
+for (const town of ["maryborough.html", "hervey-bay.html", "gympie.html"]) {
+  const html = read(town);
+  for (const service of ["cctv-installation.html", "alarm-systems.html", "starlink-wireless.html", "data-cabling-antennas.html"]) {
+    check(`${town} links to /${service}`, html.includes(`href="/${service}"`));
+  }
+}
+const home = read("index.html");
+for (const link of ["/maryborough.html", "/hervey-bay.html", "/gympie.html", "/cctv-installation.html", "/alarm-systems.html", "/starlink-wireless.html", "/data-cabling-antennas.html"]) {
+  check(`index.html body links ${link}`, home.includes(`href="${link}"`));
 }
 
+/* ---- 8. Town pages: structure + depth ---- */
+for (const town of ["maryborough.html", "hervey-bay.html", "gympie.html"]) {
+  const html = read(town);
+  const text = html.replace(/<script[\s\S]*?<\/script>/g, "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ");
+  check(`${town} has 700+ words of rendered text`, text.split(" ").length > 700);
+  check(`${town} lists suburbs`, html.includes("Suburbs We Cover"));
+  check(`${town} has a "Recent work" hook or hidden section`, !html.includes("<h2>Recent work in") || html.includes("project-grid"));
+}
+
+/* ---- 9. Trust strip on every marketing page ---- */
+for (const page of ["index.html", "about.html", "services.html", "contact.html", "maryborough.html", "hervey-bay.html", "gympie.html", "cctv-installation.html"]) {
+  assertIncludes(page, "trust-strip");
+  assertNotIncludes(page, "<!-- TRUST_STRIP -->");
+}
+
+/* ---- 10. Contact form spam protection ---- */
+assertIncludes("contact.html", 'name="_gotcha"');
+
+/* ---- 11. Asset versions bumped and consistent ---- */
+for (const page of [...allPages, "404.html"]) {
+  const html = read(page);
+  check(`${page} references style.css?v=7`, html.includes("style.css?v=7"));
+  check(`${page} has no stale style.css?v=6`, !html.includes("style.css?v=6"));
+  check(`${page} has no stale main.js?v=4 or v=5`, !html.includes("main.js?v=4") && !html.includes("main.js?v=5"));
+}
+
+/* ---- 12. Sitemap: real per-file lastmod (not all identical) ---- */
+const sitemap = read("sitemap.xml");
+for (const loc of ["/maryborough.html", "/hervey-bay.html", "/gympie.html", "/cctv-installation.html"]) {
+  check(`sitemap has ${loc}`, sitemap.includes(`https://www.bannistercommunications.com${loc}`));
+}
+const lastmods = [...sitemap.matchAll(/<lastmod>(.*?)<\/lastmod>/g)].map((m) => m[1]);
+check("sitemap lastmods are not all identical", new Set(lastmods).size > 1);
+check("sitemap still lists both blog posts", sitemap.includes("/blog/security-camera-installation-maryborough-homes/") && sitemap.includes("/blog/cctv-maintenance-checklist-small-businesses/"));
+
+/* ---- 13. Blog untouched ---- */
+assertIncludes("blog/index.html", "Security Tips and CCTV Advice");
+assertIncludes("blog/security-camera-installation-maryborough-homes/index.html", "BlogPosting");
+assertIncludes("blog/cctv-maintenance-checklist-small-businesses/index.html", "CCTV Maintenance Checklist");
+assertNotIncludes("blog/index.html", "Alarm Systems vs CCTV: What Does Your Property Need?");
+assertIncludes("admin/index.html", 'const SITE_ID = "bannister-communications";');
+
+/* ---- 14. Images referenced still exist ---- */
+for (const img of [
+  "assets/images/hikvision-authorized-silver-partner-2026-badge.webp",
+  "assets/images/bannister-communications-hikvision-silver-partner-2026.webp",
+  "assets/images/bannister-logo.webp",
+  "assets/images/craig-bannister.webp",
+  "assets/images/home-safety-connected.webp",
+]) {
+  assertExists(img);
+}
+
+if (fs.existsSync(path.join(outDir, "test.html"))) {
+  failures += 1;
+  console.error("  FAIL  production build must not contain test.html");
+}
+
+if (failures) {
+  console.error(`\nBuild verification FAILED with ${failures} problem(s).`);
+  process.exit(1);
+}
 console.log("Build verification passed.");

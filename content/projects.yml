@@ -1,0 +1,46 @@
+# Bannister Communications — real project write-ups
+# =================================================
+# One entry per real job. EVERY field comes from Craig. Never invent an entry,
+# a location, a customer type, a result or a quote. If there are no entries the
+# "Recent work" section on the town and service pages simply does not appear.
+#
+# How this gets filled: Craig answers the questions below by voice note, one job
+# at a time, while driving between sites (~2 minutes each). Matt transcribes and
+# pastes the answers in as new list items.
+#
+# Intake questions (see content/INTAKE.md for the full version):
+#   1. Where was it? Suburb, and was it a house, business, farm, school or unit block.
+#   2. What were they worried about? In their words if you remember.
+#   3. What did you put in? Brand, how many cameras or sensors, anything unusual
+#      you had to solve (long cable run, heritage house, salt air, no power at the gate).
+#   4. What changed for them afterwards? Anything they said or you noticed on a follow-up.
+#   5. Did they say anything you'd be happy to quote, and can we use their first name?
+#   6. Got a photo? Even a phone shot of the finished install or the NVR screen.
+#
+# Field reference:
+#   id:                  unique slug, e.g. hb-2026-09-torquay-4cam
+#   town:                Maryborough | Hervey Bay | Gympie | Other   (drives which town page shows it)
+#   suburb:              e.g. Torquay
+#   property_type:       home | business | rural | school | body corporate
+#   problem:             what the customer was worried about, plain words
+#   installed:           e.g. "4 x HiLook 8MP turret cameras, NVR, mobile app"
+#   outcome:             what changed for them
+#   customer_words:      optional, verbatim, only if the customer actually said it
+#   customer_first_name: optional, only with the customer's OK
+#   photos:              list of paths under /assets/projects/  (see that folder's README)
+#   date:                YYYY-MM
+#
+# Example of the shape (commented out — delete these lines when adding a real one):
+# - id: hb-2026-09-torquay-4cam
+#   town: Hervey Bay
+#   suburb: Torquay
+#   property_type: home
+#   problem: ""
+#   installed: ""
+#   outcome: ""
+#   customer_words: ""
+#   customer_first_name: ""
+#   photos: []
+#   date: 2026-09
+
+[]
