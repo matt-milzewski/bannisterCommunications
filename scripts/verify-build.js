@@ -105,9 +105,9 @@ for (const page of allPages) {
   check(`${page} has no Review schema`, !/"@type":\s*"Review"/.test(html));
 }
 
-/* ---- 5. Breadcrumbs on every non-home page ---- */
+/* ---- 5. BreadcrumbList schema on every non-home page ---- */
 for (const page of ["about.html", "services.html", "contact.html", "maryborough.html", "hervey-bay.html", "gympie.html", "cctv-installation.html", "alarm-systems.html", "starlink-wireless.html", "data-cabling-antennas.html"]) {
-  check(`${page} has a BreadcrumbList (schema or visible)`, read(page).includes("BreadcrumbList") || read(page).includes('class="breadcrumbs"'));
+  assertIncludes(page, '"@type":"BreadcrumbList"');
 }
 
 /* ---- 6. Town + service pages carry FAQPage schema ---- */

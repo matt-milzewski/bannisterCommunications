@@ -357,6 +357,12 @@ const STATIC_CURRENT = {
   "404.html": "",
 };
 
+const STATIC_BREADCRUMB = {
+  "about.html": ["About", "/about.html"],
+  "services.html": ["Services", "/services.html"],
+  "contact.html": ["Contact", "/contact.html"],
+};
+
 /**
  * Swap the hand-written header / footer / business schema in a static page for
  * the shared versions, and bump the asset cache-busting query strings. The page
@@ -384,6 +390,18 @@ function injectIntoStatic(html, filename) {
     } else {
       html = html.replace(/<\/head>/, `  ${localBusinessLd()}\n</head>`);
     }
+  }
+
+  const crumb = STATIC_BREADCRUMB[filename];
+  if (crumb) {
+    const bc = {
+      "@context": "https://schema.org",
+      ...breadcrumbLd([["Home", "/"], crumb]),
+    };
+    html = html.replace(
+      /<\/head>/,
+      `  <script type="application/ld+json">${JSON.stringify(bc)}</script>\n</head>`,
+    );
   }
 
   html = html
