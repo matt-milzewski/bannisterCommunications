@@ -59,7 +59,7 @@ const servicePages = [
     slug: "cctv-installation.html",
     title: "CCTV Installation Maryborough, Hervey Bay & Gympie",
     description:
-      "CCTV installation for Maryborough, Hervey Bay and Gympie homes, businesses and rural properties. Smart detection, phone viewing and local support. Call 0416 945 872.",
+      "CCTV installation for Maryborough, Hervey Bay and Gympie homes, businesses and rural properties. Smart detection and phone viewing. Call 0416 945 872.",
     name: "CCTV and Security Camera Installation",
     short: "CCTV Installation",
     keywords: ["cctv", "camera", "nvr", "cameras"],
@@ -99,7 +99,7 @@ const servicePages = [
     slug: "alarm-systems.html",
     title: "Alarm Systems Maryborough & Hervey Bay | Bannister",
     description:
-      "Alarm system installation for Maryborough, Hervey Bay and Gympie homes and businesses. Wireless sensors, smartphone control and CCTV integration. Call 0416 945 872.",
+      "Alarm system installation for Maryborough, Hervey Bay and Gympie homes and businesses. Wireless sensors and smartphone control. Call 0416 945 872.",
     name: "Alarm System Installation",
     short: "Alarm Installation",
     keywords: ["alarm", "sensor", "siren", "pir", "keypad"],
@@ -138,7 +138,7 @@ const servicePages = [
     slug: "starlink-wireless.html",
     title: "Starlink Installer Maryborough & Fraser Coast | Bannister",
     description:
-      "Starlink setup and point-to-point wireless links for Maryborough, Hervey Bay and Gympie homes, farms and businesses that need dependable connectivity. Call 0416 945 872.",
+      "Starlink setup and point-to-point wireless links for Maryborough, Hervey Bay and Gympie homes, farms and rural businesses. Call 0416 945 872.",
     name: "Starlink and Point-to-Point Wireless Installation",
     short: "Starlink & Wireless Setup",
     keywords: ["starlink", "wireless", "point-to-point", "link", "dish", "internet"],
@@ -177,7 +177,7 @@ const servicePages = [
     slug: "data-cabling-antennas.html",
     title: "Data Cabling & TV Antennas Maryborough | Bannister",
     description:
-      "Data cabling, network points and TV antenna installation across Maryborough, Hervey Bay and Gympie. Tidy cable routes and tested connections. Call 0416 945 872.",
+      "Data cabling, network points and TV antenna installation across Maryborough, Hervey Bay and Gympie. Tidy, tested connections. Call 0416 945 872.",
     name: "Data Cabling and TV Antenna Installation",
     short: "Cabling & Antenna Work",
     keywords: ["cabling", "cat6", "cat 6", "antenna", "network point", "data point", "tv"],
@@ -258,7 +258,7 @@ const townPages = [
     distance: "about 35 minutes from our Maryborough base",
     title: "Security Cameras Hervey Bay | CCTV & Alarm Installation",
     metaDescription:
-      "Security camera and CCTV installation in Hervey Bay — homes, businesses, holiday lets and body corporates. Alarms, Starlink and cabling too. Call 0416 945 872.",
+      "Security camera and CCTV installation in Hervey Bay for homes, businesses, holiday lets and body corporates. Alarms and cabling too. Call 0416 945 872.",
     h1: "Security Camera & CCTV Installation in Hervey Bay",
     image: "/assets/images/home-safety-connected.webp",
     lead:

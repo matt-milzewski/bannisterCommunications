@@ -71,6 +71,10 @@ for (const page of allPages) {
   check(`${page} <h1> does not contain "Wide Bay"`, !/wide bay/i.test(h1));
   check(`${page} <h1> does not lead with "Regional Queensland"`, !/^\s*regional queensland/i.test(h1));
   check(`${page} <title> length 30-70`, title.length >= 30 && title.length <= 70);
+  const desc = ((html.match(/<meta name="description" content="([^"]*)"/) || [])[1] || "")
+    .replace(/&amp;/g, "&")
+    .replace(/&#39;/g, "'");
+  check(`${page} meta description 110-160 chars (${desc.length})`, desc.length >= 110 && desc.length <= 160);
 }
 
 /* ---- 2. Every service + town page names a town somewhere in a heading ---- */
