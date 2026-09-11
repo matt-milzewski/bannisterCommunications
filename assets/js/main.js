@@ -104,6 +104,33 @@ function initContactForm() {
     const submitBtn = document.getElementById('submit-btn');
     const successMessage = document.getElementById('success-message');
     const errorMessage = document.getElementById('error-message');
+    const backupSubmitBtn = document.getElementById('backup-submit-btn');
+    const startedAtInput = document.getElementById('form-started-at');
+    const idempotencyInput = document.getElementById('form-idempotency-key');
+    const anchorApiBase = (contactForm.dataset.anchorApiBase || '').trim().replace(/\/+$/, '');
+    const anchorSiteId = contactForm.dataset.anchorSiteId || 'bannister-communications';
+    const useAnchorForms = Boolean(anchorApiBase);
+
+    const newIdempotencyKey = () => {
+        if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+            return window.crypto.randomUUID();
+        }
+        return `${Date.now()}-${Math.random().toString(16).slice(2)}-${Math.random().toString(16).slice(2)}`;
+    };
+
+    const resetSubmissionMetadata = () => {
+        if (startedAtInput) startedAtInput.value = String(Date.now());
+        if (idempotencyInput) idempotencyInput.value = newIdempotencyKey();
+    };
+
+    resetSubmissionMetadata();
+
+    if (backupSubmitBtn) {
+        backupSubmitBtn.addEventListener('click', () => {
+            backupSubmitBtn.disabled = true;
+            HTMLFormElement.prototype.submit.call(contactForm);
+        });
+    }
     
     // Phone number formatting
     const phoneInput = document.getElementById('phone');
@@ -145,7 +172,7 @@ function initContactForm() {
     });
     
     // Form submission
-    contactForm.addEventListener('submit', function(e) {
+    contactForm.addEventListener('submit', async function(e) {
         e.preventDefault();
         
         // Validate all fields before submission
@@ -180,60 +207,75 @@ function initContactForm() {
         // Hide any previous messages
         successMessage.style.display = 'none';
         errorMessage.style.display = 'none';
+        if (backupSubmitBtn) backupSubmitBtn.style.display = 'none';
         
-        // Submit form data
+        // The Formspree action remains the native and customer-controlled fallback.
         const formData = new FormData(contactForm);
-        
-        fetch(contactForm.action, {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'Accept': 'application/json'
-            }
-        })
-        .then(response => {
-            console.log('Response status:', response.status);
-            if (response.ok) {
-                return response.json().then(data => {
-                    console.log('Success response:', data);
-                    // Success
-                    successMessage.style.display = 'block';
-                    contactForm.reset();
-                    successMessage.scrollIntoView({ behavior: 'smooth' });
-                    
-                    // Track form submission (if analytics available)
-                    if (typeof gtag !== 'undefined') {
-                        gtag('event', 'form_submit', {
-                            'form_name': 'contact_form'
-                        });
+
+        try {
+            let response;
+            let result;
+
+            if (useAnchorForms) {
+                const payload = Object.fromEntries(formData.entries());
+                response = await fetch(`${anchorApiBase}/api/forms/${encodeURIComponent(anchorSiteId)}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+                result = await response.json().catch(() => ({}));
+
+                if (!response.ok || result.accepted !== true || !result.submissionId) {
+                    const error = new Error(result.error || result.errors?.join(' ') || 'The secure form service did not accept the enquiry.');
+                    error.definitiveRejection = response.status >= 400 && response.status < 500;
+                    throw error;
+                }
+            } else {
+                response = await fetch(contactForm.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Accept': 'application/json'
                     }
                 });
-            } else {
-                return response.json().then(data => {
-                    console.error('Error response:', data);
-                    throw new Error(data.error || `HTTP ${response.status}: ${response.statusText}`);
-                }).catch(() => {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                result = await response.json().catch(() => ({}));
+
+                if (!response.ok) {
+                    throw new Error(result.error || `HTTP ${response.status}: ${response.statusText}`);
+                }
+            }
+
+            successMessage.style.display = 'block';
+            contactForm.reset();
+            resetSubmissionMetadata();
+            successMessage.scrollIntoView({ behavior: 'smooth' });
+
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'form_submit', {
+                    'form_name': 'contact_form',
+                    'form_transport': useAnchorForms ? 'anchor_forms' : 'formspree'
                 });
             }
-        })
-        .catch(error => {
-            // Error
+        } catch (error) {
             errorMessage.style.display = 'block';
             errorMessage.scrollIntoView({ behavior: 'smooth' });
             console.error('Form submission error:', error);
-            
-            // Update error message with more specific details
+
             const errorText = errorMessage.querySelector('p');
-            if (errorText && error.message) {
-                errorText.textContent = `Error: ${error.message}. Please try again or contact us directly.`;
+            if (errorText) {
+                errorText.textContent = 'We could not confirm delivery. Please try again, call 0416 945 872, email support@bannistercommunications.com, or use the backup service below.';
             }
-        })
-        .finally(() => {
-            // Reset button
+
+            // Rotate only after a definite rejection. Ambiguous failures retain the
+            // key so retrying cannot duplicate an enquiry AWS may have accepted.
+            if (error.definitiveRejection) resetSubmissionMetadata();
+            if (useAnchorForms && backupSubmitBtn) backupSubmitBtn.style.display = 'inline-flex';
+        } finally {
             submitBtn.textContent = 'Send Enquiry';
             submitBtn.disabled = false;
-        });
+        }
     });
 }
 

@@ -154,13 +154,20 @@ for (const page of ["index.html", "about.html", "services.html", "contact.html",
 
 /* ---- 10. Contact form spam protection ---- */
 assertIncludes("contact.html", 'name="_gotcha"');
+assertIncludes("contact.html", 'action="https://formspree.io/f/xyzdakbn"');
+assertIncludes("contact.html", 'data-anchor-site-id="bannister-communications"');
+assertIncludes("contact.html", 'name="_startedAt"');
+assertIncludes("contact.html", 'name="_idempotencyKey"');
+assertIncludes("contact.html", 'id="backup-submit-btn"');
+assertNotIncludes("contact.html", "__ANCHOR_FORMS_API_BASE__");
 
 /* ---- 11. Asset versions bumped and consistent ---- */
 for (const page of [...allPages, "404.html"]) {
   const html = read(page);
   check(`${page} references style.css?v=7`, html.includes("style.css?v=7"));
   check(`${page} has no stale style.css?v=6`, !html.includes("style.css?v=6"));
-  check(`${page} has no stale main.js?v=4 or v=5`, !html.includes("main.js?v=4") && !html.includes("main.js?v=5"));
+  check(`${page} references main.js?v=7`, html.includes("main.js?v=7"));
+  check(`${page} has no stale main.js?v=4, v=5 or v=6`, !html.includes("main.js?v=4") && !html.includes("main.js?v=5") && !html.includes("main.js?v=6"));
 }
 
 /* ---- 12. Sitemap: real per-file lastmod (not all identical) ---- */

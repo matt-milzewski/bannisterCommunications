@@ -122,7 +122,9 @@
                         <h2>Send Us Your Enquiry</h2>
                         <p>Fill out the form below and our team will get back to you within 24 hours with personalised advice and pricing for your security needs.</p>
                         
-                        <form class="contact-form" action="https://formspree.io/f/xyzdakbn" method="POST" id="contact-form">
+                        <form class="contact-form" action="https://formspree.io/f/xyzdakbn" method="POST" id="contact-form" data-anchor-api-base="__ANCHOR_FORMS_API_BASE__" data-anchor-site-id="bannister-communications">
+                            <input type="hidden" name="_startedAt" id="form-started-at">
+                            <input type="hidden" name="_idempotencyKey" id="form-idempotency-key">
                             <div class="form-group">
                                 <label for="name">Full Name *</label>
                                 <input type="text" id="name" name="name" required>
@@ -196,6 +198,9 @@
                                     <h3>Message not sent</h3>
                                     <p>Sorry, there was an issue sending your message. Please try again or contact us directly.</p>
                                 </div>
+                                <button type="button" class="btn btn-secondary" id="backup-submit-btn" style="display: none;">
+                                    Send using our backup service
+                                </button>
                             </div>
                         </form>
                         

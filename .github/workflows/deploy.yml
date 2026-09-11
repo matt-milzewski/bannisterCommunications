@@ -29,6 +29,7 @@ jobs:
         env:
           ANCHOR_CMS_API_BASE: ${{ vars.ANCHOR_CMS_API_BASE }}
           ANCHOR_CMS_SITE_ID: bannister-communications
+          ANCHOR_FORMS_API_BASE: ${{ vars.ANCHOR_FORMS_API_BASE }}
         run: npm run build
         
       - name: Configure AWS credentials

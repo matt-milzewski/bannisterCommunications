@@ -27,7 +27,7 @@ const site = {
   licence: "4429602",
   abn: "32861916822",
   cssVersion: "7",
-  jsVersion: "6",
+  jsVersion: "7",
 };
 
 // Every asset served can be busted together off these two numbers.
@@ -370,6 +370,7 @@ const STATIC_BREADCRUMB = {
  */
 function injectIntoStatic(html, filename) {
   const current = STATIC_CURRENT[filename] ?? "";
+  const formsApiBase = String(process.env.ANCHOR_FORMS_API_BASE || "").trim().replace(/\/+$/, "");
 
   html = html.replace(/\n?[ \t]*<header class="header">[\s\S]*?<\/header>/, navHtml(current));
   html = html.replace(/[ \t]*<!-- TRUST_STRIP -->/, trustStripHtml());
@@ -406,7 +407,8 @@ function injectIntoStatic(html, filename) {
 
   html = html
     .replace(/assets\/css\/style\.css\?v=\d+/g, `assets/css/style.css?v=${site.cssVersion}`)
-    .replace(/assets\/js\/main\.js\?v=\d+/g, `assets/js/main.js?v=${site.jsVersion}`);
+    .replace(/assets\/js\/main\.js\?v=\d+/g, `assets/js/main.js?v=${site.jsVersion}`)
+    .replace(/__ANCHOR_FORMS_API_BASE__/g, escapeHtml(formsApiBase));
 
   return html;
 }
